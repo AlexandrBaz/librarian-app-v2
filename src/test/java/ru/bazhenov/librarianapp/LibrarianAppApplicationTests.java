@@ -1,0 +1,13 @@
+package ru.bazhenov.librarianapp;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class LibrarianAppApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}

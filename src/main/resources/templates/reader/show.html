@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/style.css" media="screen">
+<head>
+    <meta charset="UTF-8">
+    <title>Карточка пользователя</title>
+</head>
+<body>
+<p th:text="${reader.getFullName() + ', ' + reader.getYearOfBirth()}">VALUE</p>
+<p th:if="${reader.getBookList().isEmpty()}"
+   th:text="${'Человек пока не взял ни одной книги'}">text</p>
+<div th:if="${not reader.getBookList().isEmpty()}">
+    <strong>
+        <p  th:text="${'Книги :'}">text</p>
+    </strong>
+    <p th:each="book : ${reader.getBookList()}"
+       th:if="${not reader.getBookList().isEmpty()}"
+       th:text="${book.getName() + ', ' + book.getAuthor() + ', ' + book.getYear()}"
+       th:style="${book.getBookTakenIsExpired()}? 'font-weight: bold; color: red'">book</p>
+</div>
+<br>
+<hr>
+<form th:action="@{/reader/{id}/edit(id=${reader.getId()})}">
+    <label>
+        <input th:type="submit" value="Редактировать"/>
+    </label>
+</form>
+<br>
+<form th:method="DELETE" th:action="@{/reader/{id}(id=${reader.getId()})}">
+    <input type="submit" value="Удалить"/>
+</form>
+<hr>
+<a th:href="@{/reader}">Вернуться в меню пользователей</a>
+<br>
+<a th:href="@{/}">Вернуться в главное меню</a>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/style.css" media="screen">
+<head>
+    <meta charset="UTF-8">
+    <title>Список книг библиотеки</title>
+</head>
+<body>
+<h1>Список всех книг библиотеки :</h1>
+<hr/>
+<br/>
+<div th:if="${ paginationAndSort != null}">
+    <div th:each="book : ${paginationAndSort.getBookPage().getContent()}">
+        <a th:href="@{/books/{id}(id=${book.getId()})}"
+           th:text="${book.getName() + ', ' + book.getAuthor() + ', ' + book.getYear()}">book</a>
+    </div>
+
+    <div th:if="${paginationAndSort.getNumberOfPage() > 0 }" class="pagination">
+            <a th:each="pageNumber, index : ${#numbers.sequence( 1, __${paginationAndSort.getNumberOfPage()}__)}"
+               th:href="@{books(page=${pageNumber}-1,books_per_page=3)}"
+               th:text="${pageNumber}"
+               th:style="${paginationAndSort.getCurrentPage()== pageNumber}? 'background: #dbd7d7;'"
+            ></a>
+    </div>
+</div>
+<div th:each="book : ${book}">
+    <a th:href="@{/books/{id}(id=${book.getId()})}"
+       th:text="${book.getName() + ', ' + book.getAuthor() + ', ' + book.getYear()}">book</a>
+
+</div>
+<hr/>
+<a href="/books/new">Добавить книгу</a>
+<hr/>
+<a th:href="@{/}">Вернуться в главное меню</a>
+</body>
+</html>
