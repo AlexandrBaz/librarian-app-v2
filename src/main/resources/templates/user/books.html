@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/style.css" media="screen">
+<head>
+    <meta charset="UTF-8">
+    <title>Список доступных книг</title>
+</head>
+<body>
+<p>Список доступных книг</p>
+<table>
+    <tr>
+        <th>Название книги</th>
+        <th>Имя автора</th>
+        <th>Год выпуска</th>
+        <th></th>
+    </tr>
+    <tr th:each="book : ${books}">
+        <td th:text="${book.getName()}" style="text-align: left">Название книги</td>
+        <td th:text="${book.getAuthor()}" style="text-align: center">Имя автора</td>
+        <td th:text="${book.getYear()}" style="text-align: right">Год выпуска</td>
+        <td>
+            <form th:method="PATCH" th:action="@{/user/books/add-book-{id}(id=${book.getId()})}">
+                <input type="submit" value="Взять книгу"/>
+            </form>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

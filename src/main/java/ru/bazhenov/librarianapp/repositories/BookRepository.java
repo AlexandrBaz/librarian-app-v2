@@ -13,7 +13,9 @@ import java.util.List;
 
 @Repository
 
-public interface BookRepository extends JpaRepository<Book,Integer> {
+public interface BookRepository extends JpaRepository<Book,Long> {
+
+    List<Book> findAllByBooksCountGreaterThan(Long count);
     @NonNull
     Page<Book> findAll(@NotNull Pageable pageable);
     List<Book> findAllByNameContainsIgnoreCase(String search);

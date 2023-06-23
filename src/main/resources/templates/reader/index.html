@@ -11,7 +11,7 @@
 <br>
 <div th:each="reader : ${reader}">
     <a th:href="@{/reader/{id}(id=${reader.getId()})}"
-       th:text="${reader.getFullName() + ', ' + reader.getYearOfBirth()}">user</a>
+       th:text="${reader.getFullName() + ', ' + reader.getYearOfBirth()}">userProfile</a>
 </div>
 <br/>
 <hr/>
