@@ -4,31 +4,31 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "user_profile")
 @Data
-public class UserProfile {
+@NoArgsConstructor(force = true)
+@AllArgsConstructor
+public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false, unique = true)
+    @Column(name = "person_id", nullable = false, unique = true)
     private Long id;
-
     @NotEmpty(message = "Введите Фамилию Имя Отчество")
     @Pattern(regexp = "[А-Я][а-я]+ [А-Я][а-я]+ [А-Я][а-я]+", message = "Формат ввода, с большой буквы, разделенный пробелами")
     @Column(name = "full_name", nullable = false, unique = true)
     private String fullName;
-
     @NotEmpty(message = "Введите логин")
     @Pattern(regexp = "^[a-zA-Z0-9._-]{4,}$", message = "Формат ввода - латиница, цифры, точки, тире и подчеркивания. Длинна не менее 4")
-    @Column(name = "user_name", nullable = false, unique = true)
-    private String userName;
-
+    @Column(name = "login", nullable = false, unique = true)
+    private String login;
     @NotEmpty(message = "Введите пароль")
     @Column(name = "password", nullable = false)
 //    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$", message = "Формат ввода - латиница, не менее 8 символов\n" +
@@ -45,22 +45,17 @@ public class UserProfile {
     @Column(name = "email", nullable = false, unique = true)
     @Email
     private String email;
-
     @Column(name = "year_of_birth", nullable = false)
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "dd/MM/yyyy")
     private Date yearOfBirth;
-
-    @OneToMany(mappedBy = "userProfile", targetEntity = BookTaken.class, cascade = CascadeType.PERSIST)
-    private List<BookTaken> bookTakenList;
-
+    @OneToMany(mappedBy = "person", targetEntity = PersonBook.class, cascade = CascadeType.PERSIST)
+    private List<PersonBook> personBookList;
     @Enumerated(EnumType.STRING)
-    @Column(name = "user_role", nullable = false)
-    private UserProfileRole userProfileRole;
-
-    @Column(name="is_baned", nullable = false)
+    @Column(name = "person_role", nullable = false)
+    private PersonRole personRole;
+    @Column(name = "is_baned", nullable = false)
     private Boolean isBanned;
     @Column(name = "pass_expired")
     private Boolean passIsExpired;
-
 }

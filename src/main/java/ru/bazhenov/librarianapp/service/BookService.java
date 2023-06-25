@@ -1,17 +1,11 @@
 package ru.bazhenov.librarianapp.service;
 
-import org.jetbrains.annotations.NotNull;
-import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.bazhenov.librarianapp.models.Book;
-import ru.bazhenov.librarianapp.models.BookTaken;
-import ru.bazhenov.librarianapp.models.PaginationAndSort;
 import ru.bazhenov.librarianapp.repositories.BookRepository;
 
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true)
@@ -28,6 +22,14 @@ public class BookService {
 
     public List<Book> getBooks(){
         return bookRepository.findAllByBooksCountGreaterThan(0L);
+    }
+
+    public List<Book> getAvailableBookForUserProfile(long userId){
+        List<Book> available = bookRepository.findAllBookForUserById(userId);
+        available.forEach(book ->{
+            System.out.println(book.getName());
+        });
+        return bookRepository.findAllBookForUserById(userId);
     }
 
     @Transactional

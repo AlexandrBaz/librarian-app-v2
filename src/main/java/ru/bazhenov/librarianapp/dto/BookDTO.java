@@ -1,33 +1,28 @@
-package ru.bazhenov.librarianapp.models;
+package ru.bazhenov.librarianapp.dto;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import ru.bazhenov.librarianapp.models.PersonBook;
 
 import java.util.List;
 
-@Entity
 @Data
 @NoArgsConstructor(force = true)
-@Table(name="book")
 @AllArgsConstructor
-public class Book {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "book_id", nullable = false, unique = true)
-    private Long id;
+public class BookDTO {
+    private long id;
     @NotEmpty(message = "Введите название книги")
-    @Column(name = "name", nullable = false)
     private String name;
     @NotEmpty(message = "Введите автора книги")
-    @Column(name = "author", nullable = false)
     private String author;
     @Pattern(regexp = "^[12][0-9]{3}$|^[12][0-9]{3}-[12][0-9]{3}$", message = "Введите год выпуска, формат year или year-year")
-    @Column(name = "year", nullable = false)
     private String year;
     @Column(name = "books_count", nullable = false)
     private long booksCount;
     @OneToMany(mappedBy = "book", targetEntity = PersonBook.class, cascade = CascadeType.PERSIST)
-    private List<PersonBook> personBookList;
+    private List<PersonBookDTO> personBookList;
 }

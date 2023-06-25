@@ -3,27 +3,27 @@ package ru.bazhenov.librarianapp.security;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.bazhenov.librarianapp.models.UserProfile;
+import ru.bazhenov.librarianapp.models.Person;
 
 import java.util.Collection;
 import java.util.Collections;
 
-public record PersonDetails(UserProfile userProfile) implements UserDetails {
+public record PersonDetails(Person person) implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(userProfile.getUserProfileRole().toString()));
+        return Collections.singleton(new SimpleGrantedAuthority(person.getPersonRole().toString()));
     }
 
     @Override
     public String getPassword() {
-        return this.userProfile.getPassword();
+        return this.person.getPassword();
     }
 
     @Override
     public String getUsername() {
-        System.out.println(this.userProfile.getUserName() + "Это из базы");
-        return this.userProfile.getUserName();
+        System.out.println(this.person.getLogin() + "Это из базы");
+        return this.person.getLogin();
     }
 
     @Override
@@ -33,12 +33,12 @@ public record PersonDetails(UserProfile userProfile) implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return this.userProfile.getIsBanned();
+        return this.person.getIsBanned();
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return this.userProfile.getPassIsExpired();
+        return this.person.getPassIsExpired();
     }
 
     @Override

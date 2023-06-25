@@ -5,35 +5,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import ru.bazhenov.librarianapp.models.UserProfile;
-import ru.bazhenov.librarianapp.service.UserProfileService;
+import ru.bazhenov.librarianapp.models.Person;
+import ru.bazhenov.librarianapp.service.PersonService;
 
 @Component
-public class UserValidator implements Validator {
-    private final UserProfileService userProfileService;
+public class PersonValidator implements Validator {
+    private final PersonService personService;
     private final OthersUtils othersUtils;
 
     @Autowired
-    public UserValidator(UserProfileService userProfileService, OthersUtils othersUtils) {
-        this.userProfileService = userProfileService;
+    public PersonValidator(PersonService personService, OthersUtils othersUtils) {
+        this.personService = personService;
         this.othersUtils = othersUtils;
     }
 
     @Override
     public boolean supports(@NotNull Class<?> clazz) {
-        return UserProfile.class.equals(clazz);
+        return Person.class.equals(clazz);
     }
 
     @Override
     public void validate(@NotNull Object target, @NotNull Errors errors) {
-        UserProfile userProfile = (UserProfile) target;
-        if (!othersUtils.isCyrillic(userProfile.getFullName())){
+        Person person = (Person) target;
+        if (!othersUtils.isCyrillic(person.getFullName())){
             errors.rejectValue("fullName","", "ФИО должно быть на русском языке");
         }
-        if(userProfileService.getUserByLogin(userProfile.getUserName())){
+        if(personService.userByLoginIsPresent(person.getLogin())){
             errors.rejectValue("login", "", "Пользователь с таким логином уже существует");
         }
-        if (userProfileService.getUserByEmail(userProfile.getEmail())){
+        if (personService.getUserByEmail(person.getEmail())){
             errors.rejectValue("email", "", "Такой email уже используется");
         }
 

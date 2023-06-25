@@ -14,7 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import ru.bazhenov.librarianapp.service.UserProfileDetailsService;
+import ru.bazhenov.librarianapp.service.PersonDetailsService;
 
 @Configuration
 @EnableWebSecurity
@@ -22,10 +22,10 @@ import ru.bazhenov.librarianapp.service.UserProfileDetailsService;
 @EnableGlobalAuthentication
 public class SecurityConfig {
 
-    private final UserProfileDetailsService userProfileDetailsService;
+    private final PersonDetailsService personDetailsService;
 
-    public SecurityConfig(UserProfileDetailsService userProfileDetailsService) {
-        this.userProfileDetailsService = userProfileDetailsService;
+    public SecurityConfig(PersonDetailsService personDetailsService) {
+        this.personDetailsService = personDetailsService;
     }
 
     @Bean
@@ -41,7 +41,7 @@ public class SecurityConfig {
 
     @Autowired
     protected void registerProvider(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userProfileDetailsService);
+        auth.userDetailsService(personDetailsService);
     }
 
 

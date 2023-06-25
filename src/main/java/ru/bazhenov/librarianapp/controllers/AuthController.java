@@ -8,20 +8,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import ru.bazhenov.librarianapp.models.UserProfile;
-import ru.bazhenov.librarianapp.service.UserProfileService;
-import ru.bazhenov.librarianapp.util.UserValidator;
+import ru.bazhenov.librarianapp.models.Person;
+import ru.bazhenov.librarianapp.service.PersonService;
+import ru.bazhenov.librarianapp.util.PersonValidator;
 
 @Controller
 @RequestMapping("/auth")
 public class AuthController {
-    private final UserProfileService userProfileService;
-    private final UserValidator userValidator;
+    private final PersonService personService;
+    private final PersonValidator personValidator;
 
     @Autowired
-    public AuthController(UserProfileService userProfileService, UserValidator userValidator) {
-        this.userProfileService = userProfileService;
-        this.userValidator = userValidator;
+    public AuthController(PersonService personService, PersonValidator personValidator) {
+        this.personService = personService;
+        this.personValidator = personValidator;
     }
 
     @GetMapping("/login")
@@ -30,16 +30,16 @@ public class AuthController {
     }
 
     @GetMapping("/registration")
-    public String registrationPage(@ModelAttribute("userProfile") UserProfile userProfile){
+    public String registrationPage(@ModelAttribute("person") Person person){
         return "auth/registration";
     }
     @PostMapping("/registration")
-    public String performRegistration(@ModelAttribute("userProfile") @Valid UserProfile userProfile, BindingResult bindingResult){
-        userValidator.validate(userProfile, bindingResult);
+    public String performRegistration(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult){
+        personValidator.validate(person, bindingResult);
         if(bindingResult.hasErrors()){
             return "auth/registration";
         }
-        userProfileService.registerNewUser(userProfile);
+        personService.registerNewUser(person);
         return "redirect:/auth/login";
     }
 }

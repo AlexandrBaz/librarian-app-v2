@@ -6,12 +6,12 @@
     <title>Карточка пользователя</title>
 </head>
 <body>
-<p th:text="${userProfile.getFullName() + ', ' + userProfile.getYearOfBirth()}">value</p>
+<p th:text="${person.getFullName() + ', ' + person.getYearOfBirth()}">value</p>
 <p><a th:href="@{/user/books}">Список доступных книг</a></p>
 <hr>
-<p th:if="${userProfile.getBookTakenList().isEmpty()}"
+<p th:if="${person.getPersonBookList().isEmpty()}"
    th:text="${'Человек пока не взял ни одной книги'}">text</p>
-<div th:if="${not userProfile.getBookTakenList().isEmpty()}">
+<div th:if="${not person.getPersonBookList().isEmpty()}">
     <p><strong>Книги :</strong></p>
     <table>
         <tr>
@@ -21,15 +21,15 @@
             <th>Дата возврата книги</th>
             <th></th>
         </tr>
-        <tr th:each="bookTaken : ${userProfile.getBookTakenList()}">
-            <td th:text="${bookTaken.getBook().getName()}" style="text-align: left">Название книги</td>
-            <td th:text="${bookTaken.getBook().getAuthor()}" style="text-align: center">Имя автора</td>
-            <td th:text="${bookTaken.getBook().getYear()}" style="text-align: center">Год выпуска</td>
-            <td th:style="${bookTaken.getBookTakenIsExpired()}? 'font-weight: bold; color: red; text-align: right;' : 'text-align: right'"
-                th:text="${#dates.format(bookTaken.getBookTakenDateExpiration(), 'dd MMM yyyy')}">Дата возврата
+        <tr th:each="personBook : ${person.getPersonBookList()}">
+            <td th:text="${personBook.getBook().getName()}" style="text-align: left">Название книги</td>
+            <td th:text="${personBook.getBook().getAuthor()}" style="text-align: center">Имя автора</td>
+            <td th:text="${personBook.getBook().getYear()}" style="text-align: center">Год выпуска</td>
+            <td th:style="${personBook.getPersonBookDate()}? 'font-weight: bold; color: red; text-align: right;' : 'text-align: right'"
+                th:text="${#dates.format(personBook.getPersonBookDateExpiration()(), 'dd MMM yyyy')}">Дата возврата
             </td>
             <td>
-                <form th:method="PATCH" th:action="@{/user/books/return-book-{id}(id=${bookTaken.getBook().getId()})}">
+                <form th:method="PATCH" th:action="@{/user/books/return-book-{id}(id=${personBook.getBook().getId()})}">
                     <input type="submit" value="Вернуть книгу"/>
                 </form>
             </td>
