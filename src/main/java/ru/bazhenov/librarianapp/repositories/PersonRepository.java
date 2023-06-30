@@ -6,6 +6,6 @@ import ru.bazhenov.librarianapp.models.Person;
 import java.util.Optional;
 
 public interface PersonRepository extends JpaRepository<Person, Long> {
-    Optional<Person> findUserByLogin(String userName);
-    Optional<Person> findUserByEmail(String email);
+    Optional<Person> findPersonByLogin(String userName);
+    Optional<Person> findPersonByEmail(String email);
 }

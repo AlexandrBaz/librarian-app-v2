@@ -4,20 +4,19 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
+import ru.bazhenov.librarianapp.models.PersonBook;
 import ru.bazhenov.librarianapp.models.PersonRole;
 
 import java.util.Date;
 import java.util.List;
 
 @Data
-@NoArgsConstructor(force = true)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @AllArgsConstructor
-public class PersonDTO {
-    private Long id;
+public class PersonDTO extends AbstractDTO{
     @NotEmpty(message = "Введите Фамилию Имя Отчество")
     @Pattern(regexp = "[А-Я][а-я]+ [А-Я][а-я]+ [А-Я][а-я]+", message = "Формат ввода, с большой буквы, разделенный пробелами")
     private String fullName;

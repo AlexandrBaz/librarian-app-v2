@@ -8,15 +8,14 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor(force = true)
 @Table(name="book")
 @AllArgsConstructor
-public class Book {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "book_id", nullable = false, unique = true)
-    private Long id;
+@RequiredArgsConstructor
+public class Book extends AbstractEntity {
     @NotEmpty(message = "Введите название книги")
     @Column(name = "name", nullable = false)
     private String name;

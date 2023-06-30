@@ -1,25 +1,23 @@
 package ru.bazhenov.librarianapp.dto;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Calendar;
 import java.util.Date;
 
 @Data
-@NoArgsConstructor(force = true)
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
 @AllArgsConstructor
-public class PersonBookDTO {
-    private long id;
+public class PersonBookDTO extends AbstractDTO{
     @Temporal(TemporalType.TIMESTAMP)
     private Date personBookDate;
     @Temporal(TemporalType.DATE)
     private Date personBookDateExpiration;
     private Boolean personBookIsExpired;
-    private BookDTO book;
-    private PersonDTO person;
+    private Long bookId;
+    private Long personId;
     public void setPersonBookDateExpirationDTO(int days) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(getPersonBookDate());

@@ -21,16 +21,15 @@ public class PersonDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        Optional<Person> person = personRepository.findUserByLogin(login);
+        Optional<Person> person = personRepository.findPersonByLogin(login);
         if(person.isEmpty()){
-            System.out.println("User not found!");
             throw new UsernameNotFoundException("User not found!");
         }
         else {
             return User.builder()
                     .username(person.get().getLogin())
                     .password(person.get().getPassword())
-                    .roles(person.get().getPersonRole().toString().replaceAll("ROLE_", ""))
+                    .roles(person.get().getPersonRole().toString())
                     .build();
         }
     }

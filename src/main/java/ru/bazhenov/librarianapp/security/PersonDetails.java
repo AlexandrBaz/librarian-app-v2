@@ -22,7 +22,6 @@ public record PersonDetails(Person person) implements UserDetails {
 
     @Override
     public String getUsername() {
-        System.out.println(this.person.getLogin() + "Это из базы");
         return this.person.getLogin();
     }
 

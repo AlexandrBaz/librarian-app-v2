@@ -27,10 +27,10 @@ public class PersonBookService {
     }
 
     @Transactional
-    public void addBookToUser(long userProfileId, long bookId) {
+    public void addBookToUser(long personId, long bookId) {
         PersonBook personBook = new PersonBook();
         personBook.setPersonBookDate(new Date());
-        personBook.setPerson(personService.getUserProfileById(userProfileId));
+        personBook.setPerson(personService.getPerson(personId));
         personBook.setBook(bookService.getBook(bookId));
 
         personBookRepository.saveAndFlush(personBook);
@@ -38,18 +38,10 @@ public class PersonBookService {
     }
 
     @Transactional
-    public void returnBookFromUser(Person person, Book book) {
+    public void returnBookFromPerson(Person person, Book book) {
 
         PersonBook personBook = personBookRepository.findFirstByPersonAndBook(person,book).orElse(null);
         personBookRepository.delete(Objects.requireNonNull(personBook));
         bookService.increaseBookCount(book.getId());
     }
 }
-////    @Transactional
-////    public void setBookReader(int readerId, int bookId) {
-////        Reader reader = readerService.getByIdReader(readerId);
-////        Book book = bookRepository.findById(bookId).orElse(null);
-////        Objects.requireNonNull(book).setReader(reader);
-////        book.setBookTakenDate(new Date());
-////        bookRepository.saveAndFlush(book);
-////    }

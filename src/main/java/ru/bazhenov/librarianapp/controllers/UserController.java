@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.bazhenov.librarianapp.dto.BookDTO;
 import ru.bazhenov.librarianapp.dto.PersonDTO;
+import ru.bazhenov.librarianapp.mapper.PersonMapper;
 import ru.bazhenov.librarianapp.models.Person;
 import ru.bazhenov.librarianapp.service.BookService;
 import ru.bazhenov.librarianapp.service.PersonBookService;
@@ -33,22 +34,22 @@ public class UserController {
     private final PersonBookService personBookService;
     private final UserService userService;
     private final OthersUtils othersUtils;
+    private final PersonMapper personMapper;
 
 
     @Autowired
-    public UserController(PersonService personService, BookService bookService, PersonBookService personBookService, UserService userService, OthersUtils othersUtils) {
+    public UserController(PersonService personService, BookService bookService, PersonBookService personBookService, UserService userService, OthersUtils othersUtils, PersonMapper personMapper) {
         this.personService = personService;
         this.bookService = bookService;
         this.personBookService = personBookService;
         this.userService = userService;
         this.othersUtils = othersUtils;
+        this.personMapper = personMapper;
     }
 
     @RequestMapping("/index")
     public String getIndex(HttpServletRequest request, Model model) {
-        Person person = personService.getUserProfileByLogin(request.getUserPrincipal().getName());
-        PersonDTO personDTO = othersUtils.convertToPersonDTO(person);
-        model.addAttribute("person", userService.ensureUserProfileDTO(personDTO));
+        model.addAttribute("person", personMapper.toDTO(userService.ensurePerson(request.getUserPrincipal().getName())));
         return "user/index";
     }
 

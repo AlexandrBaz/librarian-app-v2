@@ -30,10 +30,10 @@ public class PersonValidator implements Validator {
         if (!othersUtils.isCyrillic(person.getFullName())){
             errors.rejectValue("fullName","", "ФИО должно быть на русском языке");
         }
-        if(personService.userByLoginIsPresent(person.getLogin())){
+        if(personService.personByLoginIsPresent(person.getLogin())){
             errors.rejectValue("login", "", "Пользователь с таким логином уже существует");
         }
-        if (personService.getUserByEmail(person.getEmail())){
+        if (personService.PersonByEmailIsPresent(person.getEmail())){
             errors.rejectValue("email", "", "Такой email уже используется");
         }
 

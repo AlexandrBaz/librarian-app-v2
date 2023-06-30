@@ -1,6 +1,7 @@
 package ru.bazhenov.librarianapp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,20 +21,18 @@ public class PersonService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public Person getUserProfileById(long id) {
-        return personRepository.getReferenceById(id);
+    public Person getPerson(long id){return personRepository.getReferenceById(id);}
+
+    public Person getPersonByLogin(String login){
+        return personRepository.findPersonByLogin(login).orElse(null);
     }
 
-    public Person getUserProfileByLogin(String login){
-        return personRepository.findUserByLogin(login).orElse(null);
+    public Boolean personByLoginIsPresent(String login) {
+        return personRepository.findPersonByLogin(login).isPresent();
     }
 
-    public Boolean userByLoginIsPresent(String login) {
-        return personRepository.findUserByLogin(login).isPresent();
-    }
-
-    public Boolean getUserByEmail(String email) {
-        return personRepository.findUserByEmail(email).isPresent();
+    public Boolean PersonByEmailIsPresent(String email) {
+        return personRepository.findPersonByEmail(email).isPresent();
     }
 
 

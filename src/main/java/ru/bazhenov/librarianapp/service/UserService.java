@@ -6,14 +6,16 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.bazhenov.librarianapp.dto.BookDTO;
-import ru.bazhenov.librarianapp.dto.PersonBookDTO;
 import ru.bazhenov.librarianapp.dto.PersonDTO;
+import ru.bazhenov.librarianapp.models.Book;
+import ru.bazhenov.librarianapp.models.Person;
+import ru.bazhenov.librarianapp.models.PersonBook;
 import ru.bazhenov.librarianapp.util.OthersUtils;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -21,22 +23,23 @@ import java.util.List;
 @Service
 public class UserService {
     private final BookService bookService;
-    private final OthersUtils othersUtils;
+    private final PersonService personService;
     private final static int bookDaysToExpired = 10;
     @Autowired
-    public UserService(BookService bookService, OthersUtils othersUtils) {
+    public UserService(BookService bookService, PersonService personService) {
         this.bookService = bookService;
-        this.othersUtils = othersUtils;
+        this.personService = personService;
     }
-    public PersonDTO ensureUserProfileDTO(PersonDTO personDTO) {
-        List<PersonBookDTO> personBookListDTO = personDTO.getPersonBookList();
-        if (!personBookListDTO.isEmpty()) {
-            personBookListDTO.forEach(bookTaken -> {
-                bookTaken.setPersonBookDateExpirationDTO(bookDaysToExpired);
+    public Person ensurePerson(String login) {
+        Person person = personService.getPersonByLogin(login);
+        List<PersonBook> personBookList = person.getPersonBookList();
+        if (!personBookList.isEmpty()) {
+            personBookList.forEach(bookTaken -> {
+                bookTaken.setPersonBookDateExpiration(bookDaysToExpired);
                 bookTaken.setPersonBookIsExpired(bookIsExpired(bookTaken.getPersonBookDate()));
             });
         }
-        return personDTO;
+        return person;
     }
 
     public Boolean bookIsExpired(Date dateTaken) {
@@ -44,30 +47,21 @@ public class UserService {
         return ChronoUnit.DAYS.between(bookTakenDate, LocalDate.now()) > bookDaysToExpired;
     }
 
-    public List<BookDTO> getListEnableToTake(PersonDTO personDTO) {
-        List<BookDTO> bookTakenList = personDTO.getPersonBookList().stream()
-                .map(PersonBookDTO::getBook)
-                .toList();
-        return othersUtils.convertToBookDTO(bookService.getBooks()).stream()
-                .filter(book -> !bookTakenList.contains(book))
+    public List<Book> getListEnableToTake(Person person) {
+        List<Book> personBookList = new ArrayList<>();
+        person.getPersonBookList().forEach(personBookDTO -> {
+            personBookList.add(bookService.getBook(personBookDTO.getId()));
+        });
+        return bookService.getBooks().stream()
+                .filter(book -> !personBookList.contains(book))
                 .toList();
     }
-
-//    public List<Book> getListEnableToTake(PersonDTO userProfileDTO, List<Book> books) {
-//        List<BookDTO> bookTakenList = userProfileDTO.getPersonBookList().stream()
-//                .map(PersonBookDTO::getBook)
-//                .toList();
-//        return books.stream()
-//                .filter(book -> !bookTakenList.contains(book))
-//                .toList();
-//    }
-
-    public Page<BookDTO> findPaginated(Pageable pageable, PersonDTO personDTO) {
-        List<BookDTO> books = getListEnableToTake(personDTO);
+    public Page<Book> findPaginated(Pageable pageable, Person person) {
+        List<Book> books = getListEnableToTake(person);
         int pageSize = pageable.getPageSize();
         int currentPage = pageable.getPageNumber();
         int startItem = currentPage * pageSize;
-        List<BookDTO> list;
+        List<Book> list;
 
         if (books.size() < startItem) {
             list = Collections.emptyList();
@@ -76,10 +70,7 @@ public class UserService {
             list = books.subList(startItem, toIndex);
         }
 
-        Page<BookDTO> bookPage
-                = new PageImpl<BookDTO>(list, PageRequest.of(currentPage, pageSize), books.size());
-
-        return bookPage;
+        return new PageImpl<Book>(list, PageRequest.of(currentPage, pageSize), books.size());
     }
 
 }
