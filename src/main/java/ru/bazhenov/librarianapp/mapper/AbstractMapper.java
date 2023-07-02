@@ -9,7 +9,7 @@ import ru.bazhenov.librarianapp.models.AbstractEntity;
 
 import java.util.Objects;
 
-@Component
+
 public class AbstractMapper <E extends AbstractEntity, D extends AbstractDTO> implements Mapper<E,D>{
     private ModelMapper modelMapper;
     private final Class<E> entity;

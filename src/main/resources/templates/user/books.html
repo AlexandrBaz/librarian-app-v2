@@ -9,10 +9,9 @@
 <p>Список доступных книг</p>
 <table>
     <tr>
-        <td>По названию</td>
-        <td>По Автору</td>
-        <td>По году выпуска</td>
-        <td>По дате возврата</td>
+        <td><a th:href="@{/user/books(size=${bookPage.size}, by='name')}">По названию</a></td>
+        <td><a th:href="@{/user/books(size=${bookPage.size}, by='author')}">По Автору</a></td>
+        <td><a th:href="@{/user/books(size=${bookPage.size}, by='year')}">По году выпуска</a></td>
         <td></td>
     </tr>
     <tr>
@@ -21,7 +20,7 @@
         <th>Год выпуска</th>
         <th></th>
     </tr>
-    <tr th:each="book : ${books}">
+    <tr th:each="book : ${bookPage}">
         <td th:text="${book.getName()}" style="text-align: left">Название книги</td>
         <td th:text="${book.getAuthor()}" style="text-align: center">Имя автора</td>
         <td th:text="${book.getYear()}" style="text-align: right">Год выпуска</td>
@@ -32,5 +31,11 @@
         </td>
     </tr>
 </table>
+<div th:if="${bookPage.totalPages > 0}" class="pagination">
+    <a th:each="pageNumber : ${pageNumbers}"
+       th:href="@{/user/books(size=${bookPage.size}, page=${pageNumber})}"
+       th:text="${pageNumber}"
+       th:class="${pageNumber==bookPage.number + 1} ? active">pageNumber</a>
+</div>
 </body>
 </html>

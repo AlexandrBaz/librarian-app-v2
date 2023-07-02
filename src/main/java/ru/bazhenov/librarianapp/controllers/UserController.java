@@ -49,7 +49,12 @@ public class UserController {
 
     @RequestMapping("/index")
     public String getIndex(HttpServletRequest request, Model model) {
-        model.addAttribute("person", personMapper.toDTO(userService.ensurePerson(request.getUserPrincipal().getName())));
+        PersonDTO userDto = userService.getUserDto(request.getUserPrincipal().getName());
+        model.addAttribute("person", userDto);
+        if (!userDto.getPersonBookList().isEmpty()){
+            model.addAttribute("bookList", userService.getUserBooks(userDto));
+        }
+
         return "user/index";
     }
 
@@ -58,18 +63,16 @@ public class UserController {
                            Model model,
                            @RequestParam("page") Optional<Integer> page,
                            @RequestParam("size") Optional<Integer> size,
-                           @RequestParam("type") Optional<String> type) {
-        Person person = personService.getUserProfileByLogin(request.getUserPrincipal().getName());
-        PersonDTO personDTO = othersUtils.convertToPersonDTO(person);
+                           @RequestParam("by") Optional<String> sortBy) {
+        Person person = personService.getPersonByLogin(request.getUserPrincipal().getName());
 
         int currentPage = page.orElse(1);
         int pageSize = size.orElse(5);
+        String sort = sortBy.orElse("id");
 
-        Page<BookDTO> bookPage = userService.findPaginated(
-                PageRequest.of(currentPage - 1, pageSize),
-                othersUtils.convertToPersonDTO(person));
+        Page<BookDTO> bookPage = userService.findPaginated(PageRequest.of(currentPage - 1, pageSize), person, sort);
         model.addAttribute("bookPage", bookPage);
-        int totalPages = bookPage.getTotalPages();
+        int totalPages = bookPage.getTotalPages()+1;
         if (totalPages > 0){
             List<Integer> pageNumbers = IntStream.range(1,totalPages)
                     .boxed()
@@ -77,21 +80,21 @@ public class UserController {
             model.addAttribute("pageNumbers", pageNumbers);
         }
 //        model.addAttribute("books", personService.findPaginated());
-        model.addAttribute("person", userService.getListEnableToTake(personDTO));
+        model.addAttribute("person", userService.getListEnableToTake(person, sort));
         return "user/books";
     }
 
     @RequestMapping("/books/add-book-{id}")
     public String userProfileAddBook(HttpServletRequest request, @PathVariable("id") long bookId) {
-        Person person = personService.getUserProfileByLogin(request.getUserPrincipal().getName());
+        Person person = personService.getPersonByLogin(request.getUserPrincipal().getName());
         personBookService.addBookToUser(Objects.requireNonNull(person).getId(), bookId);
         return "redirect:/user/books";
     }
 
     @RequestMapping("/books/return-book-{id}")
     public String userProfileReturnBook(HttpServletRequest request, @PathVariable("id") long bookId) {
-        Person person = personService.getUserProfileByLogin(request.getUserPrincipal().getName());
-        personBookService.returnBookFromUser(Objects.requireNonNull(person), bookService.getBook(bookId));
+        Person person = personService.getPersonByLogin(request.getUserPrincipal().getName());
+        personBookService.returnBookFromPerson(Objects.requireNonNull(person), bookService.getBook(bookId));
         return "redirect:/user/index";
     }
 }

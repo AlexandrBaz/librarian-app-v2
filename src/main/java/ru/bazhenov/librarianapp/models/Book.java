@@ -7,14 +7,13 @@ import lombok.*;
 
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Entity
-@Getter
-@Setter
-@EqualsAndHashCode(callSuper = false)
+@Data
 @NoArgsConstructor(force = true)
 @Table(name="book")
 @AllArgsConstructor
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class Book extends AbstractEntity {
     @NotEmpty(message = "Введите название книги")
     @Column(name = "name", nullable = false)

@@ -43,9 +43,9 @@ public class PersonBookMapper extends AbstractMapper<PersonBook, PersonBookDTO>{
 
     @Override
     void mapBookField(PersonBookDTO source, PersonBook destination){
-        destination.setBook(bookService.getBook(source.getId()));
+        destination.setBook(bookService.getBook(source.getBookId()));
     }
     void mapPersonField(PersonBookDTO source, PersonBook destination){
-        destination.setPerson(personService.getPerson(source.getId()));
+        destination.setPerson(personService.getPerson(source.getPersonId()));
     }
 }

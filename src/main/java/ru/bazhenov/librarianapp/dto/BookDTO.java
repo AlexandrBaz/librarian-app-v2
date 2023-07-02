@@ -13,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookDTO extends AbstractDTO {
-    private long id;
     @NotEmpty(message = "Введите название книги")
     private String name;
     @NotEmpty(message = "Введите автора книги")

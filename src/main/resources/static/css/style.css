@@ -8,7 +8,8 @@ a:hover{ color: #333; transition: 0.3s ease-out; }
 .form .form-button { text-align: center; margin: 0 10px 15px 10px; }
 .form .form-button .isubmit { background: #55c0f7; border: 0; border-radius: 4px; color: #fff; font-weight: 400; padding: 12px 60px; text-transform: uppercase; font-size: 20px; }
 .form .form-button .isubmit:hover { background-color: rgba(0,191,243,0.6); transition: 0.3s ease-out; }
-.pagination {margin: 10px auto; text-align: center; font-size: 12px; padding: 10px}
-.pagination a{display: inline-block; color: gray; margin: 5px 5px; text-align: center; border-radius: 50%; padding: 10px; background: #fff; color: #666; max-width: 10px ; max-height: 10px; line-height: 10px;border: 1px solid #666;}
+.pagination {margin: 10px auto; text-align: center; font-size: 12px; padding: 10px;}
+.pagination a{display: inline-block; margin: 5px 5px; text-align: center; border-radius: 50%; padding: 10px; background: #fff; color: #666; max-width: 10px ; max-height: 10px; line-height: 8px;border: 1px solid #666;}
+.pagination a.active{background-color: lightgray; color: white}
 table {width: 100%}
 td {padding: 0 10px 5px 10px;}

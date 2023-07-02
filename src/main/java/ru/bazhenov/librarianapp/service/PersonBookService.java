@@ -28,6 +28,8 @@ public class PersonBookService {
 
     @Transactional
     public void addBookToUser(long personId, long bookId) {
+        System.out.println(personId + " personId");
+        System.out.println(bookId + " bookId");
         PersonBook personBook = new PersonBook();
         personBook.setPersonBookDate(new Date());
         personBook.setPerson(personService.getPerson(personId));

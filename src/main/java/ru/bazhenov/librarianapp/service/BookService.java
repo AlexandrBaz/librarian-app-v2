@@ -1,5 +1,6 @@
 package ru.bazhenov.librarianapp.service;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.bazhenov.librarianapp.models.Book;
@@ -20,17 +21,17 @@ public class BookService {
        return bookRepository.getReferenceById(id);
     }
 
-    public List<Book> getBooks(){
-        return bookRepository.findAllByBooksCountGreaterThan(0L);
+    public List<Book> getBooks(String sortBy){
+        return bookRepository.findAllByBooksCountGreaterThan(0L, Sort.by(sortBy));
     }
 
-    public List<Book> getAvailableBookForUserProfile(long userId){
-        List<Book> available = bookRepository.findAllBookForUserById(userId);
-        available.forEach(book ->{
-            System.out.println(book.getName());
-        });
-        return bookRepository.findAllBookForUserById(userId);
-    }
+//    public List<Book> getAvailableBookForUserProfile(long userId){
+//        List<Book> available = bookRepository.findAllBookForUserById(userId);
+//        available.forEach(book ->{
+//            System.out.println(book.getName());
+//        });
+//        return bookRepository.findAllBookForUserById(userId);
+//    }
 
     @Transactional
     public void reduceBookCount(long bookId){
