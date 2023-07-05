@@ -4,7 +4,7 @@ import jakarta.annotation.PostConstruct;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.bazhenov.librarianapp.dto.PersonBookDTO;
+import ru.bazhenov.librarianapp.dto.PersonBookDto;
 import ru.bazhenov.librarianapp.models.PersonBook;
 import ru.bazhenov.librarianapp.service.BookService;
 import ru.bazhenov.librarianapp.service.PersonService;
@@ -12,40 +12,40 @@ import ru.bazhenov.librarianapp.service.PersonService;
 import java.util.Objects;
 
 @Component
-public class PersonBookMapper extends AbstractMapper<PersonBook, PersonBookDTO>{
+public class PersonBookMapper extends AbstractMapper<PersonBook, PersonBookDto>{
     private final ModelMapper modelMapper;
     private final PersonService personService;
     private final BookService bookService;
     @Autowired
     public PersonBookMapper(ModelMapper modelMapper, PersonService personService, BookService bookService) {
-        super(PersonBook.class, PersonBookDTO.class);
+        super(PersonBook.class, PersonBookDto.class);
         this.modelMapper = modelMapper;
         this.personService = personService;
         this.bookService = bookService;
     }
     @PostConstruct
     public void setupMapper(){
-        modelMapper.createTypeMap(PersonBook.class, PersonBookDTO.class)
-                .addMappings(mapper -> mapper.skip(PersonBookDTO::setBookId)).setPostConverter(toDtoConverter())
-                .addMappings(mapper -> mapper.skip(PersonBookDTO::setPersonId)).setPostConverter(toDtoConverter());
-        modelMapper.createTypeMap(PersonBookDTO.class, PersonBook.class)
+        modelMapper.createTypeMap(PersonBook.class, PersonBookDto.class)
+                .addMappings(mapper -> mapper.skip(PersonBookDto::setBookId)).setPostConverter(toDtoConverter())
+                .addMappings(mapper -> mapper.skip(PersonBookDto::setPersonId)).setPostConverter(toDtoConverter());
+        modelMapper.createTypeMap(PersonBookDto.class, PersonBook.class)
                 .addMappings(mapper -> mapper.skip(PersonBook::setBook)).setPostConverter(toEntityConverter())
                 .addMappings(mapper -> mapper.skip(PersonBook::setPerson)).setPostConverter(toEntityConverter());
     }
     @Override
-    void mapBookField(PersonBook source, PersonBookDTO destination){
+    void mapBookField(PersonBook source, PersonBookDto destination){
         destination.setBookId(Objects.isNull(source) || Objects.isNull(source.getId()) ? null : source.getBook().getId());
     }
     @Override
-    void mapPersonField(PersonBook source, PersonBookDTO destination){
+    void mapPersonField(PersonBook source, PersonBookDto destination){
         destination.setPersonId(Objects.isNull(source) || Objects.isNull(source.getId()) ? null : source.getPerson().getId());
     }
 
     @Override
-    void mapBookField(PersonBookDTO source, PersonBook destination){
+    void mapBookField(PersonBookDto source, PersonBook destination){
         destination.setBook(bookService.getBook(source.getBookId()));
     }
-    void mapPersonField(PersonBookDTO source, PersonBook destination){
+    void mapPersonField(PersonBookDto source, PersonBook destination){
         destination.setPerson(personService.getPerson(source.getPersonId()));
     }
 }

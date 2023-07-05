@@ -5,10 +5,20 @@
 <script type="application/javascript" src="/scripts/tcal.js"></script>
 <head>
     <meta charset="UTF-8">
-    <title>Регистрация нового пользователя</title>
+    <title>Профиль пользователя</title>
 </head>
 <body>
-<form th:method="POST" th:action="@{/auth/registration}" th:object="${personDto}" class="profile">
+<table>
+    <tr>
+        <td th:text="${userDto.getFullName()}" style="text-align: left">Имя пользователя</td>
+        <td><a th:href="@{/user/index}"
+               th:text="'Количество взятых книг: ' + ${userDto.getPersonBookList().size()}">Количество
+            взятых книг</a></td>
+        <td><a th:href="@{/user/books}">Список доступных книг</a></td>
+        <td><a th:href="@{/logout}" text="Выйти" style="text-align: right">Выйти</a></td>
+    </tr>
+</table>
+<form th:method="POST" th:action="@{/user/settings}" th:object="${userDto}" class="profile">
     <table>
         <tr>
             <td colspan="2" style="text-align: center">
@@ -16,14 +26,12 @@
             </td>
         </tr>
         <tr>
-            <td><label for="login">Введите Ваш Логин</label></td>
+            <td><label for="login">Сменить Ваш Логин</label></td>
             <td><input type="text" th:field="*{login}" id="login"/></td>
         </tr>
         <tr>
             <td colspan="2" style="text-align: center">
-                <div style="color: red" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">fullName
-                    Error
-                </div>
+                <div style="color: red" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">fullName Error</div>
             </td>
         </tr>
         <tr>
@@ -32,14 +40,21 @@
         </tr>
         <tr>
             <td colspan="2" style="text-align: center">
-                <div style="color: red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password
-                    Error
-                </div>
+                <div style="color: red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</div>
             </td>
         </tr>
         <tr>
-            <td><label for="password">Введите пароль</label></td>
+            <td><label for="password">Введите старый пароль</label></td>
             <td><input type="password" th:field="*{password}" id="password"/></td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center">
+                <div style="color: red" th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}">Password Error</div>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="newPassword">Введите новый пароль</label></td>
+            <td><input type="password" th:field="*{newPassword}" id="newPassword"/></td>
         </tr>
         <tr>
             <td colspan="2" style="text-align: center">
@@ -52,9 +67,7 @@
         </tr>
         <tr>
             <td colspan="2" style="text-align: center">
-                <div style="color: red" th:if="${#fields.hasErrors('yearOfBirth')}" th:errors="*{yearOfBirth}">Year
-                    Error
-                </div>
+                <div style="color: red" th:if="${#fields.hasErrors('yearOfBirth')}" th:errors="*{yearOfBirth}">Year Error</div>
             </td>
         </tr>
         <tr>
@@ -62,8 +75,8 @@
             <td><input type="text" th:field="*{yearOfBirth}" id="yearOfBirth" name="date" class="tcal" value=""/></td>
         </tr>
         <tr>
-            <td><input type="submit" value="Зарегистрироваться"/></td>
-            <td><p><a th:href="@{/auth/login}">Войти под своим Логином и Паролем</a></p></td>
+            <td><input type="submit" value="Изменить профиль"/></td>
+            <td></td>
         </tr>
     </table>
 </form>

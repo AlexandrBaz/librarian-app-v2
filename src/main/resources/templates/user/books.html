@@ -6,13 +6,56 @@
     <title>Список доступных книг</title>
 </head>
 <body>
+<div>
+    <table>
+        <tr>
+            <td th:text="${userDto.getFullName()}" style="text-align: left">Имя пользователя</td>
+            <td><a th:href="@{/user/index}"
+                   th:text="'Количество взятых книг: ' + ${userDto.getPersonBookList().size()}">Количество
+                взятых книг</a></td>
+            <td><a th:href="@{/user/settings}" text="Профиль">Профиль</a></td>
+            <td><a th:href="@{/logout}" text="Выйти" style="text-align: right">Выйти</a></td>
+        </tr>
+    </table>
+</div>
+<form th:action="@{/user/books(search=${param.q})}">
+    <label for="search">Введите поисковый запрос : </label>
+    <input type="text" id="search" th:name="search"/>
+    <input type="submit" value="Искать"/>
+</form>
+<div th:if="${booksSearch != null}">
+    <div th:if="${booksSearch.isEmpty()}">
+        <p>Книг не найдено</p>
+    </div>
+    <div th:if="${not booksSearch.isEmpty()}">
+        <table>
+            <tr>
+                <th>Название книги</th>
+                <th>Имя автора</th>
+                <th>Год выпуска</th>
+                <th></th>
+            </tr>
+            <tr th:each="bookDto : ${booksSearch}">
+                <td th:text="${bookDto.getName()}" style="text-align: left">Название книги</td>
+                <td th:text="${bookDto.getAuthor()}">Имя автора</td>
+                <td th:text="${bookDto.getYear()}">Год выпуска</td>
+                <td>
+                    <form th:method="PATCH" th:action="@{/user/books/add-book-{id}(id=${bookDto.getId()})}">
+                        <input type="submit" value="Взять книгу"/>
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<hr>
 <p>Список доступных книг</p>
 <table>
     <tr>
-        <td><a th:href="@{/user/books(size=${bookPage.size}, by='name')}">По названию</a></td>
-        <td><a th:href="@{/user/books(size=${bookPage.size}, by='author')}">По Автору</a></td>
-        <td><a th:href="@{/user/books(size=${bookPage.size}, by='year')}">По году выпуска</a></td>
-        <td></td>
+        <td style="width:40%"><a th:href="@{/user/books(size=${bookDtoList.size}, by='name')}">По названию</a></td>
+        <td style="width:20%"><a th:href="@{/user/books(size=${bookDtoList.size}, by='author')}">По Автору</a></td>
+        <td style="width:20%"><a th:href="@{/user/books(size=${bookDtoList.size}, by='year')}">По году выпуска</a></td>
+        <td style="width:20%"></td>
     </tr>
     <tr>
         <th>Название книги</th>
@@ -20,22 +63,22 @@
         <th>Год выпуска</th>
         <th></th>
     </tr>
-    <tr th:each="book : ${bookPage}">
-        <td th:text="${book.getName()}" style="text-align: left">Название книги</td>
-        <td th:text="${book.getAuthor()}" style="text-align: center">Имя автора</td>
-        <td th:text="${book.getYear()}" style="text-align: right">Год выпуска</td>
-        <td>
-            <form th:method="PATCH" th:action="@{/user/books/add-book-{id}(id=${book.getId()})}">
+    <tr th:each="bookDto : ${bookDtoList}">
+        <td style="width:40%; text-align: left" th:text="${bookDto.getName()}">Название книги</td>
+        <td style="width:20%" th:text="${bookDto.getAuthor()}">Имя автора</td>
+        <td style="width:20%" th:text="${bookDto.getYear()}">Год выпуска</td>
+        <td style="width:20%">
+            <form th:method="PATCH" th:action="@{/user/books/add-book-{id}(id=${bookDto.getId()})}">
                 <input type="submit" value="Взять книгу"/>
             </form>
         </td>
     </tr>
 </table>
-<div th:if="${bookPage.totalPages > 0}" class="pagination">
+<div th:if="${bookDtoList.totalPages > 0}" class="pagination">
     <a th:each="pageNumber : ${pageNumbers}"
-       th:href="@{/user/books(size=${bookPage.size}, page=${pageNumber})}"
+       th:href="@{/user/books(size=${bookDtoList.size}, page=${pageNumber})}"
        th:text="${pageNumber}"
-       th:class="${pageNumber==bookPage.number + 1} ? active">pageNumber</a>
+       th:class="${pageNumber==bookDtoList.number + 1} ? active">pageNumber</a>
 </div>
 </body>
 </html>

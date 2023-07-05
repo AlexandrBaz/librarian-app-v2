@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import ru.bazhenov.librarianapp.dto.PersonDto;
 import ru.bazhenov.librarianapp.models.Person;
 import ru.bazhenov.librarianapp.service.PersonService;
 import ru.bazhenov.librarianapp.util.PersonValidator;
@@ -30,16 +31,16 @@ public class AuthController {
     }
 
     @GetMapping("/registration")
-    public String registrationPage(@ModelAttribute("person") Person person){
+    public String registrationPage(@ModelAttribute("personDto") PersonDto personDto){
         return "auth/registration";
     }
     @PostMapping("/registration")
-    public String performRegistration(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult){
-        personValidator.validate(person, bindingResult);
+    public String performRegistration(@ModelAttribute("personDto") @Valid PersonDto personDto, BindingResult bindingResult){
+        personValidator.validate(personDto, bindingResult);
         if(bindingResult.hasErrors()){
             return "auth/registration";
         }
-        personService.registerNewUser(person);
+        personService.registerNewUser(personDto);
         return "redirect:/auth/login";
     }
 }

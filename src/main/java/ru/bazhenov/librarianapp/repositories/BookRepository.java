@@ -19,16 +19,5 @@ public interface BookRepository extends JpaRepository<Book,Long> {
     List<Book> findAllByBooksCountGreaterThan(Long count, Sort by);
     @NonNull
     Page<Book> findAll(@NotNull Pageable pageable);
-    List<Book> findAllByNameContainsIgnoreCase(String search);
-
-//    @Transactional
-//    @Query(nativeQuery = true, value = "select * from book as b left outer join book_taken bt on b.book_id = bt.id_book where user_profile_id is null or not user_profile_id =:id")
-//    List<Book> findAllBookForUserById(long id);
-//
-//    @Transactional
-//    @Query(nativeQuery = true , value = "select * from book as b left join book_taken bt on b.book_id = bt.id_book where user_profile_id = :id")
-//    Page<Book> findAllAvailableBookByUserId(long id, Pageable pageable);
 
 }
-
-//select * from book as b left outer join book_taken bt on b.book_id = bt.id_book where user_profile_id IS NULL or not user_profile_id='1';

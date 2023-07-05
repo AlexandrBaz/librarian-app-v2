@@ -3,26 +3,26 @@ package ru.bazhenov.librarianapp.security;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.bazhenov.librarianapp.models.Person;
+import ru.bazhenov.librarianapp.dto.PersonDto;
 
 import java.util.Collection;
 import java.util.Collections;
 
-public record PersonDetails(Person person) implements UserDetails {
+public record PersonDetails(PersonDto personDto) implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(person.getPersonRole().toString()));
+        return Collections.singleton(new SimpleGrantedAuthority(personDto.getPersonRole().toString()));
     }
 
     @Override
     public String getPassword() {
-        return this.person.getPassword();
+        return this.personDto.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return this.person.getLogin();
+        return this.personDto.getLogin();
     }
 
     @Override
@@ -32,12 +32,12 @@ public record PersonDetails(Person person) implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return this.person.getIsBanned();
+        return this.personDto.getIsBanned();
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return this.person.getPassIsExpired();
+        return this.personDto.getPassIsExpired();
     }
 
     @Override

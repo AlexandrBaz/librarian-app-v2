@@ -12,7 +12,6 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-//@RequiredArgsConstructor
 public class PersonBook extends AbstractEntity{
     @Column(name = "person_book_date")
     @Temporal(TemporalType.TIMESTAMP)

@@ -9,6 +9,6 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AbstractDTO implements Serializable {
+public class AbstractDto implements Serializable {
     private Long id;
 }

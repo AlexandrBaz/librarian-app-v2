@@ -3,14 +3,13 @@ package ru.bazhenov.librarianapp.mapper;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import ru.bazhenov.librarianapp.dto.AbstractDTO;
+import ru.bazhenov.librarianapp.dto.AbstractDto;
 import ru.bazhenov.librarianapp.models.AbstractEntity;
 
 import java.util.Objects;
 
 
-public class AbstractMapper <E extends AbstractEntity, D extends AbstractDTO> implements Mapper<E,D>{
+public class AbstractMapper <E extends AbstractEntity, D extends AbstractDto> implements Mapper<E,D>{
     private ModelMapper modelMapper;
     private final Class<E> entity;
     private final Class<D> dto;

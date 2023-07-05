@@ -10,7 +10,7 @@ import java.util.Date;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class PersonBookDTO extends AbstractDTO{
+public class PersonBookDto extends AbstractDto {
     @Temporal(TemporalType.TIMESTAMP)
     private Date personBookDate;
     @Temporal(TemporalType.DATE)
@@ -18,7 +18,7 @@ public class PersonBookDTO extends AbstractDTO{
     private Boolean personBookIsExpired;
     private Long bookId;
     private Long personId;
-    public void setPersonBookDateExpirationDTO(int days) {
+    public void setPersonBookDateExpirationDto(int days) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(getPersonBookDate());
         calendar.add(Calendar.DATE, days);

@@ -1,15 +1,6 @@
 package ru.bazhenov.librarianapp.util;
 
 import org.springframework.stereotype.Component;
-import ru.bazhenov.librarianapp.dto.BookDTO;
-import ru.bazhenov.librarianapp.dto.PersonBookDTO;
-import ru.bazhenov.librarianapp.dto.PersonDTO;
-import ru.bazhenov.librarianapp.models.Book;
-import ru.bazhenov.librarianapp.models.Person;
-import ru.bazhenov.librarianapp.models.PersonBook;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class OthersUtils {
