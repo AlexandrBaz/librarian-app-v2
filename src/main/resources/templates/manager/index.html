@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/style.css" media="screen">
+<head>
+    <meta charset="UTF-8">
+    <title>Страница менеджера</title>
+</head>
+<body>
+<div>
+    <table>
+        <tr>
+            <td colspan="2" th:text="${managerDto.getFullName()}" style="text-align: left">Имя пользователя</td>
+            <td><a th:href="@{/manager/settings}" text="Профиль">Профиль</a></td>
+            <td><a th:href="@{/logout}" text="Выйти" style="text-align: right">Выйти</a></td>
+        </tr>
+        <tr>
+            <td colspan="4"><hr></td>
+        </tr>
+        <tr>
+            <td><a th:href="@{/manager/index}">Должники</a></td>
+            <td><a th:href="@{/manager/index}">Пользователи</a></td>
+            <td><a th:href="@{/user/books}">Книги</a></td>
+            <td><a th:href="@{/user/books}">Добавить книгу</a></td>
+        </tr>
+    </table>
+</div>
+<div th:if="${not bookDtoExpiredList.isEmpty()}">
+    <p><strong>Должники :</strong></p>
+    <table>
+        <tr>
+            <th>ФИО</th>
+            <th>Название книги</th>
+            <th>Дата возврата книги</th>
+            <th>Просрочено дней</th>
+            <th>Профиль</th>
+        </tr>
+        <tr th:each="bookDtoExpired : ${bookDtoExpiredList}">
+
+            <td th:text="${bookDtoExpired.getUserName()}" style="text-align: left">ФИО</td>
+            <td th:text="${bookDtoExpired.getName()}" style="text-align: center">Название книги</td>
+            <td th:text="${#temporals.format(bookDtoExpired.getBookDateExpiration(), 'dd MMM yyyy')}"
+                style="text-align: center">Дата возврата книги
+            </td>
+            <td th:text="${bookDtoExpired.getTotalDaysExpire()}">Просрочено дней</td>
+            <td> <a th:href="@{/manager/user-{id}(id=${bookDtoExpired.getUserId()})}" text="Профиль">Профиль</a>
+            </td>
+        </tr>
+    </table>
+</div>
+<div th:if="${not bannedUserList.isEmpty()}">
+    <p><strong>Заблокированные пользователи :</strong></p>
+    <table>
+        <tr>
+            <th>ФИО</th>
+            <th>Профиль</th>
+        </tr>
+        <tr th:each="userDto : ${bannedUserList}">
+            <td th:text="${userDto.getFullName()}" style="text-align: left">ФИО</td>
+            <td> <a th:href="@{/manager/user-{id}(id=${userDto.getId()})}" text="Профиль">Профиль</a>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

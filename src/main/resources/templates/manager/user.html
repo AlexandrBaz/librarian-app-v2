@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/style.css" media="screen">
+<head>
+  <meta charset="UTF-8">
+  <title>Карточка пользователя</title>
+</head>
+<body>
+<div>
+  <table>
+    <tr>
+      <td colspan="2" th:text="${managerDto.getFullName()}" style="text-align: left">Имя пользователя</td>
+      <td><a th:href="@{/manager/settings}" text="Профиль">Профиль</a></td>
+      <td><a th:href="@{/logout}" text="Выйти" style="text-align: right">Выйти</a></td>
+    </tr>
+    <tr>
+      <td colspan="4"><hr></td>
+    </tr>
+    <tr>
+      <td><a th:href="@{/manager/index}">Должники</a></td>
+      <td><a th:href="@{/manager/index}">Пользователи</a></td>
+      <td><a th:href="@{/user/books}">Книги</a></td>
+      <td><a th:href="@{/user/books}">Добавить книгу</a></td>
+    </tr>
+  </table>
+</div>
+
+<p><strong>Профиль пользователя :</strong></p>
+<table>
+  <tr>
+    <th>ФИО</th>
+    <th>Email</th>
+    <th>Статус</th>
+    <th></th>
+  </tr>
+  <tr>
+
+    <td th:text="${userDto.getFullName()}" style="text-align: left">ФИО</td>
+    <td th:text="${userDto.getEmail()}" style="text-align: center">Название книги</td>
+    <td th:text="${userDto.getIsBanned()} ? 'Заблокированный' : 'Активный' " >Просрочено дней</td>
+    <td>  </td>
+  </tr>
+</table>
+
+</body>
+</html>

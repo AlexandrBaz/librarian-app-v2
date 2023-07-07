@@ -3,8 +3,7 @@ package ru.bazhenov.librarianapp.models;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "person_book")
@@ -14,23 +13,12 @@ import java.util.Date;
 @AllArgsConstructor
 public class PersonBook extends AbstractEntity{
     @Column(name = "person_book_date")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date personBookDate;
-    @Transient
     @Temporal(TemporalType.DATE)
-    private Date personBookDateExpiration;
-    @Transient
-    private Boolean personBookIsExpired;
+    private LocalDate personBookDate;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "book", referencedColumnName = "id")
     private Book book;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "person", referencedColumnName = "id")
     private Person person;
-    public void setPersonBookDateExpiration(int days) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(getPersonBookDate());
-        calendar.add(Calendar.DATE, days);
-        this.personBookDateExpiration = calendar.getTime();
-    }
 }

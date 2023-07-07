@@ -9,16 +9,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class DefaultController {
 
     @GetMapping
-    public String index(){
+    public String index() {
         return "index";
     }
 
     @RequestMapping("/default")
     public String defaultAfterLogin(HttpServletRequest request) {
-            if (request.isUserInRole("ADMIN")) {
-                return "redirect:/admin/";
-            }
-            return "redirect:/user/index";
+        if (request.isUserInRole("ADMIN")) {
+            return "redirect:/admin/";
+        } else if (request.isUserInRole("MANAGER")) {
+            return "redirect:/manager/index";
         }
+        return "redirect:/user/index";
+    }
 
 }

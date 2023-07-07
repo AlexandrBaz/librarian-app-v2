@@ -8,8 +8,7 @@ import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import ru.bazhenov.librarianapp.models.PersonBook;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -25,20 +24,15 @@ public class BookDto extends AbstractDto {
     private String year;
     private long booksCount;
     private List<PersonBook> personBookList;
-
     @Transient
     @Temporal(TemporalType.DATE)
-    private Date bookDateTaken;
+    private LocalDate bookDateTaken;
     @Transient
     @Temporal(TemporalType.DATE)
-    private Date bookDateExpiration;
+    private LocalDate bookDateExpiration;
     @Transient
     private Boolean bookReturnIsExpired;
-
-    public void setBookDateExpiration(int days) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(getBookDateTaken());
-        calendar.add(Calendar.DATE, days);
-        this.bookDateExpiration = calendar.getTime();
-    }
+    private String userName;
+    private long userId;
+    private Long totalDaysExpire;
 }

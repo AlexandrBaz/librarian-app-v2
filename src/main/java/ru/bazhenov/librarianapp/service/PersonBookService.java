@@ -8,7 +8,8 @@ import ru.bazhenov.librarianapp.models.PersonBook;
 import ru.bazhenov.librarianapp.models.Person;
 import ru.bazhenov.librarianapp.repositories.PersonBookRepository;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -22,10 +23,14 @@ public class PersonBookService {
         this.personBookRepository = personBookRepository;
     }
 
+    public List<PersonBook> getAllPersonBook(){
+        return personBookRepository.findAll();
+    }
+
     @Transactional
     public void addBookToUser(Person person, Book book) {
         PersonBook personBook = new PersonBook();
-        personBook.setPersonBookDate(new Date());
+        personBook.setPersonBookDate(LocalDate.now());
         personBook.setPerson(person);
         personBook.setBook(book);
         personBookRepository.saveAndFlush(personBook);

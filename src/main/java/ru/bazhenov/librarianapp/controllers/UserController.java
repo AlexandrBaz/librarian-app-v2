@@ -37,7 +37,7 @@ public class UserController {
         PersonDto userDto = userService.getUserDto(request.getUserPrincipal().getName());
         model.addAttribute("userDto", userDto);
         if (!userDto.getPersonBookList().isEmpty()){
-            model.addAttribute("bookList", userService.getUserBooks(userDto));
+            model.addAttribute("bookList", userService.getUserBooks(request.getUserPrincipal().getName()));
         }
         return "user/index";
     }

@@ -9,6 +9,7 @@ import ru.bazhenov.librarianapp.models.Person;
 import ru.bazhenov.librarianapp.models.PersonRole;
 import ru.bazhenov.librarianapp.repositories.PersonRepository;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -67,5 +68,9 @@ public class PersonService {
         person.setYearOfBirth(personDto.getYearOfBirth());
         personRepository.save(person);
 
+    }
+
+    public List<Person> getAllBannedUsers() {
+        return personRepository.findAllByPersonRoleAndIsBanned(PersonRole.USER, true);
     }
 }

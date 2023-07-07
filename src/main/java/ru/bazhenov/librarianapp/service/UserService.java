@@ -1,62 +1,53 @@
 package ru.bazhenov.librarianapp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import ru.bazhenov.librarianapp.dto.BookDto;
 import ru.bazhenov.librarianapp.dto.PersonDto;
 import ru.bazhenov.librarianapp.mapper.BookMapper;
+import ru.bazhenov.librarianapp.mapper.PersonBookToBookDtoMapper;
 import ru.bazhenov.librarianapp.mapper.PersonMapper;
 import ru.bazhenov.librarianapp.models.Book;
 import ru.bazhenov.librarianapp.models.Person;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 @Service
+@PreAuthorize("hasRole('ROLE_USER')")
 public class UserService {
     private final BookService bookService;
     private final PersonService personService;
     private final PersonBookService personBookService;
     private final PersonMapper personMapper;
     private final BookMapper bookMapper;
-    @Value("${bookDaysToExpired}")
-    static int bookDaysToExpired;
+    private final PersonBookToBookDtoMapper personBookToBookDtoMapper;
 
     @Autowired
-    public UserService(BookService bookService, PersonService personService, PersonBookService personBookService, PersonMapper personMapper, BookMapper bookMapper) {
+    public UserService(BookService bookService, PersonService personService, PersonBookService personBookService, PersonMapper personMapper, BookMapper bookMapper, PersonBookToBookDtoMapper personBookToBookDtoMapper) {
         this.bookService = bookService;
         this.personService = personService;
         this.personBookService = personBookService;
         this.personMapper = personMapper;
         this.bookMapper = bookMapper;
+        this.personBookToBookDtoMapper = personBookToBookDtoMapper;
     }
 
     public PersonDto getUserDto(String login) {
         return personMapper.toDTO(personService.getPersonByLogin(login));
     }
 
-    public List<BookDto> getUserBooks(PersonDto userDto) {
-        List<BookDto> bookDtoList = new ArrayList<>();
-        userDto.getPersonBookList().forEach(personBookDto -> {
-            BookDto bookDto = bookMapper.toDTO(bookService.getBook(personBookDto.getBookId()));
-            bookDto.setBookDateTaken(personBookDto.getPersonBookDate());
-            bookDto.setBookDateExpiration(bookDaysToExpired);
-            bookDto.setBookReturnIsExpired(bookIsExpired(personBookDto.getPersonBookDate()));
-            bookDtoList.add(bookDto);
-        });
-        return bookDtoList;
-    }
-
-    private Boolean bookIsExpired(Date dateTaken) {
-        LocalDate bookTakenDate = dateTaken.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        return ChronoUnit.DAYS.between(bookTakenDate, LocalDate.now()) > bookDaysToExpired;
+    public List<BookDto> getUserBooks(String login) {
+        return personService.getPersonByLogin(login).getPersonBookList().stream()
+                .map(personBookToBookDtoMapper::toDTO)
+                .toList();
     }
 
     public List<BookDto> getListEnableToTake(PersonDto userDto, String sortBy) {

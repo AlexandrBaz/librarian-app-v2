@@ -34,7 +34,7 @@
             <td th:text="${book.getName()}" style="text-align: left">Название книги</td>
             <td th:text="${book.getAuthor()}" style="text-align: center">Имя автора</td>
             <td th:text="${book.getYear()}" style="text-align: center">Год выпуска</td>
-            <td th:text="${#dates.format(book.getBookDateExpiration(), 'dd MMM yyyy')}">Дата возврата
+            <td th:text="${#temporals.format(book.getBookDateExpiration(), 'dd MMM yyyy')}">Дата возврата
             </td>
             <td>
                 <form th:method="PATCH" th:action="@{/user/books/return-book-{id}(id=${book.getId()})}">

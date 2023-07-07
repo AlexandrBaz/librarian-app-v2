@@ -16,6 +16,7 @@ public class PersonBookMapper extends AbstractMapper<PersonBook, PersonBookDto>{
     private final ModelMapper modelMapper;
     private final PersonService personService;
     private final BookService bookService;
+
     @Autowired
     public PersonBookMapper(ModelMapper modelMapper, PersonService personService, BookService bookService) {
         super(PersonBook.class, PersonBookDto.class);
@@ -32,6 +33,7 @@ public class PersonBookMapper extends AbstractMapper<PersonBook, PersonBookDto>{
                 .addMappings(mapper -> mapper.skip(PersonBook::setBook)).setPostConverter(toEntityConverter())
                 .addMappings(mapper -> mapper.skip(PersonBook::setPerson)).setPostConverter(toEntityConverter());
     }
+
     @Override
     void mapBookField(PersonBook source, PersonBookDto destination){
         destination.setBookId(Objects.isNull(source) || Objects.isNull(source.getId()) ? null : source.getBook().getId());
