@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/style.css" media="screen">
+<link rel="stylesheet" href="/css/tcal.css" media="screen">
+<script type="application/javascript" src="/scripts/tcal.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация нового пользователя</title>
+</head>
+<body>
+<form th:method="POST" th:action="@{/auth/registration}" th:object="${personDto}" class="profile">
+    <table>
+        <tr>
+            <td colspan="2" style="text-align: center">
+                <div style="color: red" th:if="${#fields.hasErrors('login')}" th:errors="*{login}">userName Error</div>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="login">Введите Ваш Логин</label></td>
+            <td><input type="text" th:field="*{login}" id="login"/></td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center">
+                <div style="color: red" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">fullName
+                    Error
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="fullName">Введите Фамилию Имя Отчество</label></td>
+            <td><input type="text" th:field="*{fullName}" id="fullName"/></td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center">
+                <div style="color: red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password
+                    Error
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="password">Введите пароль</label></td>
+            <td><input type="password" th:field="*{password}" id="password"/></td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center">
+                <div style="color: red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</div>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="email">Введите Ваш email</label></td>
+            <td><input type="text" th:field="*{email}" id="email"/></td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center">
+                <div style="color: red" th:if="${#fields.hasErrors('yearOfBirth')}" th:errors="*{yearOfBirth}">Year
+                    Error
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="yearOfBirth">Введите год рождения</label></td>
+            <td><input type="text" th:field="*{yearOfBirth}" id="yearOfBirth" name="date" class="tcal" value=""/></td>
+        </tr>
+        <tr>
+            <td><input type="submit" value="Зарегистрироваться"/></td>
+            <td><p><a th:href="@{/auth/login}">Войти под своим Логином и Паролем</a></p></td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>

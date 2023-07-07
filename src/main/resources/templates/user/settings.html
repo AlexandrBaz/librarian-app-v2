@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/style.css" media="screen">
+<link rel="stylesheet" href="/css/tcal.css" media="screen">
+<script type="application/javascript" src="/scripts/tcal.js"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль пользователя</title>
+</head>
+<body>
+<table>
+    <tr>
+        <td th:text="${userDto.getFullName()}" style="text-align: left">Имя пользователя</td>
+        <td><a th:href="@{/user/index}"
+               th:text="'Количество взятых книг: ' + ${userDto.getPersonBookList().size()}">Количество
+            взятых книг</a></td>
+        <td><a th:href="@{/user/books}">Список доступных книг</a></td>
+        <td><a th:href="@{/logout}" text="Выйти" style="text-align: right">Выйти</a></td>
+    </tr>
+</table>
+<form th:method="POST" th:action="@{/user/settings}" th:object="${userDto}" class="profile">
+    <table>
+        <tr>
+            <td colspan="2" style="text-align: center">
+                <div style="color: red" th:if="${#fields.hasErrors('login')}" th:errors="*{login}">userName Error</div>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="login">Сменить Ваш Логин</label></td>
+            <td><input type="text" th:field="*{login}" id="login"/></td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center">
+                <div style="color: red" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}">fullName Error</div>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="fullName">Введите Фамилию Имя Отчество</label></td>
+            <td><input type="text" th:field="*{fullName}" id="fullName"/></td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center">
+                <div style="color: red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Password Error</div>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="password">Введите старый пароль</label></td>
+            <td><input type="password" th:field="*{password}" id="password"/></td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center">
+                <div style="color: red" th:if="${#fields.hasErrors('newPassword')}" th:errors="*{newPassword}">Password Error</div>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="newPassword">Введите новый пароль</label></td>
+            <td><input type="password" th:field="*{newPassword}" id="newPassword"/></td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center">
+                <div style="color: red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email Error</div>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="email">Введите Ваш email</label></td>
+            <td><input type="text" th:field="*{email}" id="email"/></td>
+        </tr>
+        <tr>
+            <td colspan="2" style="text-align: center">
+                <div style="color: red" th:if="${#fields.hasErrors('yearOfBirth')}" th:errors="*{yearOfBirth}">Year Error</div>
+            </td>
+        </tr>
+        <tr>
+            <td><label for="yearOfBirth">Введите год рождения</label></td>
+            <td><input type="text" th:field="*{yearOfBirth}" id="yearOfBirth" name="date" class="tcal" value=""/></td>
+        </tr>
+        <tr>
+            <td><input type="submit" value="Изменить профиль"/></td>
+            <td></td>
+        </tr>
+    </table>
+</form>
+</body>
+</html>
