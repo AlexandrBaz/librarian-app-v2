@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/style.css" media="screen">
+<head>
+    <meta charset="UTF-8">
+    <title>Все книги</title>
+</head>
+<body>
+<div>
+    <table>
+        <tr>
+            <td colspan="2" th:text="${managerDto.getFullName()}" style="text-align: left">Имя пользователя</td>
+            <td><a th:href="@{/manager/settings}" text="Профиль">Профиль</a></td>
+            <td><a th:href="@{/logout}" text="Выйти" style="text-align: right">Выйти</a></td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <hr>
+            </td>
+        </tr>
+        <tr>
+            <td><a th:href="@{/manager/index}">Должники</a></td>
+            <td><a th:href="@{/manager/users}">Пользователи</a></td>
+            <td><a th:href="@{/manager/books}">Книги</a></td>
+            <td><a th:href="@{/manager/add-books}">Добавить книгу</a></td>
+        </tr>
+    </table>
+</div>
+<form th:action="@{/manager/books(search=${param.q})}">
+    <label for="search">Введите поисковый запрос : </label>
+    <input type="text" id="search" th:name="search"/>
+    <input type="submit" value="Искать"/>
+</form>
+<div th:if="${booksSearch != null}">
+    <div th:if="${booksSearch.isEmpty()}">
+        <p>Книг не найдено</p>
+    </div>
+    <div th:if="${not booksSearch.isEmpty()}">
+        <table>
+            <tr>
+                <th>Название книги</th>
+                <th>Имя автора</th>
+                <th>Год выпуска</th>
+                <th>Кол-во оставшихся книг</th>
+            </tr>
+            <tr th:each="bookDto : ${booksSearch}">
+                <td th:text="${bookDto.getName()}" style="text-align: left">Название книги</td>
+                <td th:text="${bookDto.getAuthor()}">Имя автора</td>
+                <td th:text="${bookDto.getYear()}">Год выпуска</td>
+                <td th:text="${bookDto.getBooksCount()}">Кол-во оставшихся книг</td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div th:if="${bookDtoList.isEmpty()}">
+    <p>Нет книг</p>
+</div>
+<div th:if="${!bookDtoList.isEmpty()}">
+    <table>
+        <tr>
+            <td style="width:40%" th:switch="${sortBy}">
+                <a th:case="'name'" th:href="@{/manager/books(size=${bookDtoList.size}, by='nameDesc')}">По названию &darr;</a>
+                <a th:case="'nameDesc'" th:href="@{/manager/books(size=${bookDtoList.size}, by='name')}">По названию &uarr;</a>
+                <a th:case="*" th:href="@{/manager/books(size=${bookDtoList.size}, by='nameDesc')}">По названию &darr;</a>
+            </td>
+            <td style="width:20%" th:switch="${sortBy}">
+                <a th:case="'author'" th:href="@{/manager/books(size=${bookDtoList.size}, by='authorDesc')}">По Автору &darr;</a>
+                <a th:case="'authorDesc'" th:href="@{/manager/books(size=${bookDtoList.size}, by='author')}">По Автору &uarr;</a>
+                <a th:case="*" th:href="@{/manager/books(size=${bookDtoList.size}, by='authorDesc')}">По Автору &darr;</a>
+            </td>
+            <td style="width:20%" th:switch="${sortBy}">
+                <a th:case="'year'" th:href="@{/manager/books(size=${bookDtoList.size}, by='yearDesc')}">По году выпуска &darr;</a>
+                <a th:case="'yearDesc'" th:href="@{/manager/books(size=${bookDtoList.size}, by='year')}">По году выпуска &uarr;</a>
+                <a th:case="*" th:href="@{/manager/books(size=${bookDtoList.size}, by='yearDesc')}">По году выпуска &darr;</a>
+            </td>
+            <td style="width:20%" th:switch="${sortBy}">
+                <a th:case="'count'" th:href="@{/manager/books(size=${bookDtoList.size}, by='countDesc')}">По количеству &darr;</a>
+                <a th:case="'countDesc'" th:href="@{/manager/books(size=${bookDtoList.size}, by='count')}">По количеству &uarr;</a>
+                <a th:case="*" th:href="@{/manager/books(size=${bookDtoList.size}, by='countDesc')}">По количеству &darr;</a>
+            </td>
+        </tr>
+        <tr>
+            <th>Название книги</th>
+            <th>Имя автора</th>
+            <th>Год выпуска</th>
+            <th>Кол-во оставшихся книг</th>
+        </tr>
+        <tr th:each="bookDto : ${bookDtoList}">
+            <td style="width:40%; text-align: left" th:text="${bookDto.getName()}">Название книги</td>
+            <td style="width:20%" th:text="${bookDto.getAuthor()}">Имя автора</td>
+            <td style="width:20%" th:text="${bookDto.getYear()}">Год выпуска</td>
+            <td th:text="${bookDto.getBooksCount()}">Кол-во оставшихся книг</td>
+        </tr>
+    </table>
+    <div th:if="${bookDtoList.totalPages > 0}" class="pagination">
+        <a th:each="pageNumber : ${pageNumbers}"
+           th:href="@{/manager/books(size=${bookDtoList.size}, page=${pageNumber} ,by=__${sortBy}__)}"
+           th:text="${pageNumber}"
+           th:class="${pageNumber==bookDtoList.number + 1} ? active">pageNumber</a>
+    </div>
+</div>
+</body>
+</html>

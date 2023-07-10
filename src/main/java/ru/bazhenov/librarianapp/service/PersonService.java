@@ -73,4 +73,9 @@ public class PersonService {
     public List<Person> getAllBannedUsers() {
         return personRepository.findAllByPersonRoleAndIsBanned(PersonRole.USER, true);
     }
+
+    @Transactional
+    public void changePersonStatus(Person person) {
+        personRepository.saveAndFlush(person);
+    }
 }
