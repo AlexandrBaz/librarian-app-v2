@@ -23,8 +23,12 @@ public class BookService {
        return bookRepository.getReferenceById(id);
     }
 
-    public List<Book> getBooks(String sortBy){
-        return bookRepository.findAllByBooksCountGreaterThan(0L, Sort.by(sortBy));
+    public List<Book> getAllBooks(String sortBy) {
+        return bookRepository.findAll(Sort.by(sortBy));
+    }
+
+    public List<Book> getAvailableBooksForUser(long userId){
+        return bookRepository.findAvailableBookForUser(0L, userId);
     }
 
     @Transactional

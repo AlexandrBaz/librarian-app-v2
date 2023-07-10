@@ -4,32 +4,32 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.bazhenov.librarianapp.dto.BookDto;
 import ru.bazhenov.librarianapp.dto.PersonDto;
+import ru.bazhenov.librarianapp.models.PageableData;
 import ru.bazhenov.librarianapp.service.UserService;
 import ru.bazhenov.librarianapp.util.ChangeProfileValidator;
+import ru.bazhenov.librarianapp.util.Pagination;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
     private final ChangeProfileValidator changeProfileValidator;
+    private final Pagination pagination;
 
 
     @Autowired
-    public UserController(UserService userService, ChangeProfileValidator changeProfileValidator) {
+    public UserController(UserService userService, ChangeProfileValidator changeProfileValidator, Pagination pagination) {
         this.userService = userService;
         this.changeProfileValidator = changeProfileValidator;
+        this.pagination = pagination;
     }
 
     @GetMapping("/index")
@@ -39,7 +39,7 @@ public class UserController {
         if (!userDto.getPersonBookList().isEmpty()){
             model.addAttribute("bookList", userService.getUserBooks(request.getUserPrincipal().getName()));
         }
-        return "user/index";
+        return "/user/index";
     }
 
     @GetMapping(value = "/books")
@@ -49,26 +49,30 @@ public class UserController {
                            @RequestParam("page") Optional<Integer> page,
                            @RequestParam("size") Optional<Integer> size,
                            @RequestParam("by") Optional<String> sortBy) {
-        int currentPage = page.orElse(1);
-        int pageSize = size.orElse(5);
-        String sort = sortBy.orElse("id");
         PersonDto userDto = userService.getUserDto(request.getUserPrincipal().getName());
+        model.addAttribute("userDto", userDto);
+
         if(search.isPresent()){
             String key = search.map(Object::toString).orElse(null);
-            model.addAttribute("booksSearch", userService.searchBook(key, userDto));
+            if (!key.isBlank()) {
+                model.addAttribute("booksSearch", userService.searchBook(key, userDto));
+            }
         }
-        Page<BookDto> bookPage = userService.findPaginated(PageRequest.of(currentPage - 1, pageSize), userDto, sort);
-        model.addAttribute("bookDtoList", bookPage);
-        int totalPages = bookPage.getTotalPages() + 1;
+
+        PageableData pageableData = new PageableData();
+        pageableData.setCurrenPage(page.orElse(1));
+        pageableData.setPageSize(size.orElse(5));
+        pageableData.setSort(sortBy.orElse("name"));
+        Page<BookDto> availableBookPage = pagination.getPaginatedPage(pageableData, userDto);
+        model.addAttribute("bookDtoList", availableBookPage);
+        int totalPages = availableBookPage.getTotalPages() + 1;
         if (totalPages > 0){
-            List<Integer> pageNumbers = IntStream.range(1,totalPages)
-                    .boxed()
-                    .collect(Collectors.toList());
-            model.addAttribute("pageNumbers", pageNumbers);
+            model.addAttribute("pageNumbers", pagination.getPageNumbers(totalPages));
         }
-        model.addAttribute("userDto", userDto);
-        return "user/books";
+        model.addAttribute("sortBy", sortBy.map(Object::toString).orElse(null));
+        return "/user/books";
     }
+
     @PatchMapping("/books/add-book-{id}")
     public String userProfileAddBook(HttpServletRequest request, @PathVariable("id") long bookId) {
         userService.addBookToUser(request.getUserPrincipal().getName(), bookId);
@@ -88,7 +92,7 @@ public class UserController {
         return "/user/settings";
     }
 
-    @PostMapping("/settings")
+    @PatchMapping("/settings")
     public String updateUserProfile(@ModelAttribute("userDto") @Valid PersonDto userDto,
                                     BindingResult bindingResult, HttpServletRequest request){
         changeProfileValidator.validate(userDto, bindingResult);
@@ -101,5 +105,3 @@ public class UserController {
         return "redirect:/user/settings";
     }
 }
-
-//TODO ResponseEntity внедрить

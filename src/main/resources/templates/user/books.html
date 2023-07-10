@@ -49,36 +49,52 @@
     </div>
 </div>
 <hr>
-<p>Список доступных книг</p>
-<table>
-    <tr>
-        <td style="width:40%"><a th:href="@{/user/books(size=${bookDtoList.size}, by='name')}">По названию</a></td>
-        <td style="width:20%"><a th:href="@{/user/books(size=${bookDtoList.size}, by='author')}">По Автору</a></td>
-        <td style="width:20%"><a th:href="@{/user/books(size=${bookDtoList.size}, by='year')}">По году выпуска</a></td>
-        <td style="width:20%"></td>
-    </tr>
-    <tr>
-        <th>Название книги</th>
-        <th>Имя автора</th>
-        <th>Год выпуска</th>
-        <th></th>
-    </tr>
-    <tr th:each="bookDto : ${bookDtoList}">
-        <td style="width:40%; text-align: left" th:text="${bookDto.getName()}">Название книги</td>
-        <td style="width:20%" th:text="${bookDto.getAuthor()}">Имя автора</td>
-        <td style="width:20%" th:text="${bookDto.getYear()}">Год выпуска</td>
-        <td style="width:20%">
-            <form th:method="PATCH" th:action="@{/user/books/add-book-{id}(id=${bookDto.getId()})}">
-                <input type="submit" value="Взять книгу"/>
-            </form>
-        </td>
-    </tr>
-</table>
-<div th:if="${bookDtoList.totalPages > 0}" class="pagination">
-    <a th:each="pageNumber : ${pageNumbers}"
-       th:href="@{/user/books(size=${bookDtoList.size}, page=${pageNumber})}"
-       th:text="${pageNumber}"
-       th:class="${pageNumber==bookDtoList.number + 1} ? active">pageNumber</a>
+<div th:if="${bookDtoList.isEmpty()}">
+    <p>Нет доступных книг</p>
+</div>
+<div th:if="${!bookDtoList.isEmpty()}">
+    <table>
+        <tr>
+            <td style="width:40%" th:switch="${sortBy}">
+                <a th:case="'name'" th:href="@{/user/books(size=${bookDtoList.size}, by='nameDesc')}">По названию &darr;</a>
+                <a th:case="'nameDesc'" th:href="@{/user/books(size=${bookDtoList.size}, by='name')}">По названию &uarr;</a>
+                <a th:case="*" th:href="@{/user/books(size=${bookDtoList.size}, by='nameDesc')}">По названию &darr;</a>
+            </td>
+            <td style="width:20%" th:switch="${sortBy}">
+                <a th:case="'author'" th:href="@{/user/books(size=${bookDtoList.size}, by='authorDesc')}">По Автору &darr;</a>
+                <a th:case="'authorDesc'" th:href="@{/user/books(size=${bookDtoList.size}, by='author')}">По Автору &uarr;</a>
+                <a th:case="*" th:href="@{/user/books(size=${bookDtoList.size}, by='authorDesc')}">По Автору &darr;</a>
+            </td>
+            <td style="width:20%" th:switch="${sortBy}">
+                <a th:case="'year'" th:href="@{/user/books(size=${bookDtoList.size}, by='yearDesc')}">По году выпуска &darr;</a>
+                <a th:case="'yearDesc'" th:href="@{/user/books(size=${bookDtoList.size}, by='year')}">По году выпуска &uarr;</a>
+                <a th:case="*" th:href="@{/user/books(size=${bookDtoList.size}, by='yearDesc')}">По году выпуска &darr;</a>
+            </td>
+            <td style="width:20%"></td>
+        </tr>
+        <tr>
+            <th>Название книги</th>
+            <th>Имя автора</th>
+            <th>Год выпуска</th>
+            <th></th>
+        </tr>
+        <tr th:each="bookDto : ${bookDtoList}">
+            <td style="width:40%; text-align: left" th:text="${bookDto.getName()}">Название книги</td>
+            <td style="width:20%" th:text="${bookDto.getAuthor()}">Имя автора</td>
+            <td style="width:20%" th:text="${bookDto.getYear()}">Год выпуска</td>
+            <td style="width:20%">
+                <form th:method="PATCH" th:action="@{/user/books/add-book-{id}(id=${bookDto.getId()})}">
+                    <input type="submit" value="Взять книгу"/>
+                </form>
+            </td>
+        </tr>
+    </table>
+    <div th:if="${bookDtoList.totalPages > 0}" class="pagination">
+        <a th:each="pageNumber : ${pageNumbers}"
+           th:href="@{/user/books(size=${bookDtoList.size}, page=${pageNumber} ,by=__${sortBy}__)}"
+           th:text="${pageNumber}"
+           th:class="${pageNumber==bookDtoList.number + 1} ? active">pageNumber</a>
+    </div>
 </div>
 </body>
 </html>

@@ -1,10 +1,6 @@
 package ru.bazhenov.librarianapp.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import ru.bazhenov.librarianapp.dto.BookDto;
@@ -15,10 +11,7 @@ import ru.bazhenov.librarianapp.mapper.PersonMapper;
 import ru.bazhenov.librarianapp.models.Book;
 import ru.bazhenov.librarianapp.models.Person;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 @Service
 @PreAuthorize("hasRole('ROLE_USER')")
@@ -44,38 +37,23 @@ public class UserService {
         return personMapper.toDTO(personService.getPersonByLogin(login));
     }
 
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER')" )
     public List<BookDto> getUserBooks(String login) {
         return personService.getPersonByLogin(login).getPersonBookList().stream()
                 .map(personBookToBookDtoMapper::toDTO)
                 .toList();
     }
 
-    public List<BookDto> getListEnableToTake(PersonDto userDto, String sortBy) {
-        List<Book> personBookList = new ArrayList<>();
-        userDto.getPersonBookList().forEach(personBookDTO -> personBookList.add(bookService.getBook(personBookDTO.getBookId())));
-        return bookService.getBooks(sortBy).stream()
-                .filter(book -> !personBookList.contains(book))
+    public List<BookDto> getListEnableToTake(PersonDto userDto) {
+        List<Book> bookList =bookService.getAvailableBooksForUser(userDto.getId());
+        return bookList.stream()
                 .map(bookMapper::toDTO)
+                .sorted(Comparator.comparing(BookDto::getName))
                 .toList();
     }
 
-    public Page<BookDto> findPaginated(Pageable pageable, PersonDto userDto, String sortBy) {
-        List<BookDto> books = getListEnableToTake(userDto, sortBy);
-        int pageSize = pageable.getPageSize();
-        int currentPage = pageable.getPageNumber();
-        int startItem = currentPage * pageSize;
-        List<BookDto> list;
-        if (books.size() < startItem) {
-            list = Collections.emptyList();
-        } else {
-            int toIndex = Math.min(startItem + pageSize, books.size());
-            list = books.subList(startItem, toIndex);
-        }
-        return new PageImpl<>(list, PageRequest.of(currentPage, pageSize), books.size());
-    }
-
     public List<BookDto> searchBook(String key, PersonDto userDto) {
-        List<BookDto> books = getListEnableToTake(userDto, "name");
+        List<BookDto> books = getListEnableToTake(userDto);
         return books.stream()
                 .filter(bookDto -> bookDto.getName().toLowerCase(Locale.ROOT).contains(key.toLowerCase(Locale.ROOT)))
                 .toList();

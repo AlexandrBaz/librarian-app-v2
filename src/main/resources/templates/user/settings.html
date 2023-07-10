@@ -18,7 +18,7 @@
         <td><a th:href="@{/logout}" text="Выйти" style="text-align: right">Выйти</a></td>
     </tr>
 </table>
-<form th:method="POST" th:action="@{/user/settings}" th:object="${userDto}" class="profile">
+<form th:method="PATCH" th:action="@{/user/settings}" th:object="${userDto}" class="profile">
     <table>
         <tr>
             <td colspan="2" style="text-align: center">
