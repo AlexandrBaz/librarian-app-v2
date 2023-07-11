@@ -44,4 +44,8 @@ public class BookService {
         book.setBooksCount(book.getBooksCount()+1);
         bookRepository.saveAndFlush(book);
     }
+    @Transactional
+    public void addBook(Book book) {
+        bookRepository.saveAndFlush(book);
+    }
 }

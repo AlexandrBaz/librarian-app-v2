@@ -4,11 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import ru.bazhenov.librarianapp.dto.BookDto;
+import ru.bazhenov.librarianapp.dto.ChangePersonDto;
 import ru.bazhenov.librarianapp.dto.PersonDto;
 import ru.bazhenov.librarianapp.mapper.BookMapper;
 import ru.bazhenov.librarianapp.mapper.PersonBookToBookDtoMapper;
 import ru.bazhenov.librarianapp.mapper.PersonMapper;
-import ru.bazhenov.librarianapp.models.Book;
 import ru.bazhenov.librarianapp.models.Person;
 
 import java.util.*;
@@ -36,8 +36,11 @@ public class UserService {
     public PersonDto getUserDto(String login) {
         return personMapper.toDTO(personService.getPersonByLogin(login));
     }
+    public void updateUser(ChangePersonDto personDto) {
+        personService.updateUser(personDto);
+    }
 
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER')" )
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')" )
     public List<BookDto> getUserBooks(String login) {
         return personService.getPersonByLogin(login).getPersonBookList().stream()
                 .map(personBookToBookDtoMapper::toDTO)
@@ -45,16 +48,14 @@ public class UserService {
     }
 
     public List<BookDto> getListEnableToTake(PersonDto userDto) {
-        List<Book> bookList =bookService.getAvailableBooksForUser(userDto.getId());
-        return bookList.stream()
+        return bookService.getAvailableBooksForUser(userDto.getId()).stream()
                 .map(bookMapper::toDTO)
                 .sorted(Comparator.comparing(BookDto::getName))
                 .toList();
     }
 
     public List<BookDto> searchBook(String key, PersonDto userDto) {
-        List<BookDto> books = getListEnableToTake(userDto);
-        return books.stream()
+        return getListEnableToTake(userDto).stream()
                 .filter(bookDto -> bookDto.getName().toLowerCase(Locale.ROOT).contains(key.toLowerCase(Locale.ROOT)))
                 .toList();
     }
@@ -68,9 +69,5 @@ public class UserService {
         Person userEntity = personService.getPersonByLogin(login);
         personBookService.returnBookFromPerson(userEntity, bookService.getBook(bookId));
         bookService.increaseBookCount(bookId);
-    }
-
-    public void updateUser(PersonDto personDto) {
-        personService.updateUser(personDto);
     }
 }

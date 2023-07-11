@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.bazhenov.librarianapp.dto.BookDto;
+import ru.bazhenov.librarianapp.dto.ChangePersonDto;
 import ru.bazhenov.librarianapp.dto.PersonDto;
 import ru.bazhenov.librarianapp.models.PageableData;
 import ru.bazhenov.librarianapp.service.UserService;
@@ -86,22 +87,27 @@ public class UserController {
     }
 
     @GetMapping("/settings")
-    public String changeUserProfile(HttpServletRequest request, Model model){
+    public String changeUserProfile(HttpServletRequest request, Model model, @RequestParam("status") Optional<String> status){
         PersonDto userDto = userService.getUserDto(request.getUserPrincipal().getName());
         model.addAttribute("userDto", userDto);
+        if(status.isPresent()){
+            String changeSave = status.orElse(null);
+            model.addAttribute("changeSave", changeSave);
+        }
         return "/user/settings";
     }
 
     @PatchMapping("/settings")
-    public String updateUserProfile(@ModelAttribute("userDto") @Valid PersonDto userDto,
+    public String updateUserProfile(@ModelAttribute("userDto") @Valid ChangePersonDto userDto,
                                     BindingResult bindingResult, HttpServletRequest request){
+        PersonDto currentUserDto = userService.getUserDto(request.getUserPrincipal().getName());
+        userDto.setLogin(currentUserDto.getLogin());
         changeProfileValidator.validate(userDto, bindingResult);
-        userDto.setLogin(request.getUserPrincipal().getName());
         userDto.setPersonBookList(userService.getUserDto(request.getUserPrincipal().getName()).getPersonBookList());
         if(bindingResult.hasErrors()){
             return "/user/settings";
         }
         userService.updateUser(userDto);
-        return "redirect:/user/settings";
+        return "redirect:/user/settings?status=ok";
     }
 }

@@ -10,19 +10,26 @@
     <table>
         <tr>
             <td th:text="${userDto.getFullName()}" style="text-align: left">Имя пользователя</td>
-            <td><a th:href="@{/user/index}"
-                   th:text="'Количество взятых книг: ' + ${userDto.getPersonBookList().size()}">Количество
-                взятых книг</a></td>
-            <td><a th:href="@{/user/settings}" text="Профиль">Профиль</a></td>
+            <td><a th:href="@{/user/settings}" text="Профиль" style="text-align: center">Профиль</a></td>
             <td><a th:href="@{/logout}" text="Выйти" style="text-align: right">Выйти</a></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <a th:href="@{/user/index}"
+                   th:text="'Количество взятых книг: ' + ${userDto.getPersonBookList().size()}">
+                    Количество взятых книг</a>
+            </td>
+            <td><a th:href="@{/user/books}" class="active">Список доступных книг</a></td>
         </tr>
     </table>
 </div>
-<form th:action="@{/user/books(search=${param.q})}">
-    <label for="search">Введите поисковый запрос : </label>
-    <input type="text" id="search" th:name="search"/>
-    <input type="submit" value="Искать"/>
-</form>
+<div>
+    <form th:action="@{/user/books(search=${param.q})}">
+        <label for="search">Введите поисковый запрос : </label>
+        <input type="text" id="search" th:name="search"/>
+        <input type="submit" value="Искать"/>
+    </form>
+</div>
 <div th:if="${booksSearch != null}">
     <div th:if="${booksSearch.isEmpty()}">
         <p>Книг не найдено</p>
@@ -56,19 +63,32 @@
     <table>
         <tr>
             <td style="width:40%" th:switch="${sortBy}">
-                <a th:case="'name'" th:href="@{/user/books(size=${bookDtoList.size}, by='nameDesc')}">По названию &darr;</a>
-                <a th:case="'nameDesc'" th:href="@{/user/books(size=${bookDtoList.size}, by='name')}">По названию &uarr;</a>
+                <a th:case="'name'" th:href="@{/user/books(size=${bookDtoList.size}, by='nameDesc')}" class="active">По
+                    названию
+                    &darr;</a>
+                <a th:case="'nameDesc'" th:href="@{/user/books(size=${bookDtoList.size}, by='name')}" class="active">По
+                    названию
+                    &uarr;</a>
                 <a th:case="*" th:href="@{/user/books(size=${bookDtoList.size}, by='nameDesc')}">По названию &darr;</a>
             </td>
             <td style="width:20%" th:switch="${sortBy}">
-                <a th:case="'author'" th:href="@{/user/books(size=${bookDtoList.size}, by='authorDesc')}">По Автору &darr;</a>
-                <a th:case="'authorDesc'" th:href="@{/user/books(size=${bookDtoList.size}, by='author')}">По Автору &uarr;</a>
+                <a th:case="'author'" th:href="@{/user/books(size=${bookDtoList.size}, by='authorDesc')}"
+                   class="active">По Автору
+                    &darr;</a>
+                <a th:case="'authorDesc'" th:href="@{/user/books(size=${bookDtoList.size}, by='author')}"
+                   class="active">По Автору
+                    &uarr;</a>
                 <a th:case="*" th:href="@{/user/books(size=${bookDtoList.size}, by='authorDesc')}">По Автору &darr;</a>
             </td>
             <td style="width:20%" th:switch="${sortBy}">
-                <a th:case="'year'" th:href="@{/user/books(size=${bookDtoList.size}, by='yearDesc')}">По году выпуска &darr;</a>
-                <a th:case="'yearDesc'" th:href="@{/user/books(size=${bookDtoList.size}, by='year')}">По году выпуска &uarr;</a>
-                <a th:case="*" th:href="@{/user/books(size=${bookDtoList.size}, by='yearDesc')}">По году выпуска &darr;</a>
+                <a th:case="'year'" th:href="@{/user/books(size=${bookDtoList.size}, by='yearDesc')}" class="active">По
+                    году выпуска
+                    &darr;</a>
+                <a th:case="'yearDesc'" th:href="@{/user/books(size=${bookDtoList.size}, by='year')}" class="active">По
+                    году выпуска
+                    &uarr;</a>
+                <a th:case="*" th:href="@{/user/books(size=${bookDtoList.size}, by='yearDesc')}">По году выпуска
+                    &darr;</a>
             </td>
             <td style="width:20%"></td>
         </tr>

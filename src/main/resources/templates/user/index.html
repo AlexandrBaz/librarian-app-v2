@@ -10,15 +10,24 @@
     <table>
         <tr>
             <td th:text="${userDto.getFullName()}" style="text-align: left">Имя пользователя</td>
-            <td><a th:href="@{/user/books}">Список доступных книг</a></td>
-            <td><a th:href="@{/user/settings}" text="Профиль">Профиль</a></td>
+            <td><a th:href="@{/user/settings}" text="Профиль" style="text-align: center">Профиль</a></td>
             <td><a th:href="@{/logout}" text="Выйти" style="text-align: right">Выйти</a></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <a th:href="@{/user/index}" class="active" style="text-align: left"
+                   th:text="'Количество взятых книг: ' + ${userDto.getPersonBookList().size()}">
+                    Количество взятых книг</a>
+            </td>
+            <td><a th:href="@{/user/books}">Список доступных книг</a></td>
         </tr>
     </table>
 </div>
 <hr>
-<p th:if="${userDto.getPersonBookList().isEmpty()}"
-   th:text="${'У Вас нет книг'}">text</p>
+<div>
+    <p th:if="${userDto.getPersonBookList().isEmpty()}"
+       th:text="${'У Вас нет книг'}">text</p>
+</div>
 <div th:if="${not userDto.getPersonBookList().isEmpty()}">
     <p><strong>Книги :</strong></p>
     <table>
@@ -30,7 +39,7 @@
             <th></th>
         </tr>
         <tr th:each="book : ${bookList}"
-            th:style="${book.getBookReturnIsExpired()} ? 'font-weight: bold; color: red; text-align: right;'">
+            th:style="${book.getBookReturnIsExpired()} ? 'font-weight: bold; color: #cc3f3f; text-align: right;'">
             <td th:text="${book.getName()}" style="text-align: left">Название книги</td>
             <td th:text="${book.getAuthor()}" style="text-align: center">Имя автора</td>
             <td th:text="${book.getYear()}" style="text-align: center">Год выпуска</td>

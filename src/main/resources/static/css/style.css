@@ -16,3 +16,4 @@ td {padding: 0 10px 5px 10px; text-align: center;}
 .profile td {padding: 0 10px 5px 10px; text-align: left; width: 45%}
 .profile {margin: 0 5px 0 5px;}
 .profile input{width: 80%}
+.active {color: darkorange}

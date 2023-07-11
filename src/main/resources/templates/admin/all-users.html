@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/style.css" media="screen">
+<head>
+    <meta charset="UTF-8">
+    <title>Все пользователи</title>
+</head>
+<body>
+<div>
+  <table>
+    <tr>
+      <td colspan="2" th:text="${adminDto.getFullName()}" style="text-align: left">Имя пользователя</td>
+      <td><a th:href="@{/admin/settings}" text="Профиль" style="text-align: center">Профиль</a></td>
+      <td><a th:href="@{/logout}" text="Выйти" style="text-align: right">Выйти</a></td>
+    </tr>
+    <tr>
+      <td><a th:href="@{/admin/index}">Статистика</a></td>
+      <td><a th:href="@{/admin/all-users}" class="active">Список пользователей</a></td>
+      <td><a th:href="@{/admin/all-managers}">Список менеджеров</a></td>
+      <td><a th:href="@{/admin/add-manager}">Добавить менеджера</a></td>
+    </tr>
+  </table>
+</div>
+<hr>
+<div th:if="${userDtoList.isEmpty()}">
+  <p>Нет пользователей!</p>
+</div>
+<div>
+  <div th:if="${!userDtoList.isEmpty()}">
+    <p><strong>Пользователи :</strong></p>
+    <table>
+      <tr>
+        <th>ФИО</th>
+        <th>Email</th>
+        <th>Количество книг на руках</th>
+        <th>Статус</th>
+        <th>Профиль</th>
+      </tr>
+      <tr th:each="userDto : ${userDtoList}">
+        <td th:text="${userDto.getFullName()}" style="text-align: left">ФИО</td>
+        <td th:text="${userDto.getEmail()}" style="text-align: center">Email</td>
+        <td th:text="${userDto.getPersonBookList().size()}">Количество книг на руках</td>
+        <td th:text="${userDto.getIsBanned()} ? 'Заблокированный' : 'Активный'">Статус</td>
+        <td><a th:href="@{/admin/user-{id}(id=${userDto.getId()})}" text="Профиль">Профиль</a>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>
+</body>
+</html>
