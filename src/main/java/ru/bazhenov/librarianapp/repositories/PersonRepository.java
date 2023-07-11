@@ -11,4 +11,5 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
     Optional<Person> findPersonByLogin(String userName);
     Optional<Person> findPersonByEmail(String email);
     List<Person> findAllByPersonRoleAndIsBanned(PersonRole personRole, Boolean isBanned);
+    List<Person> findAllByPersonRole(PersonRole personRole);
 }

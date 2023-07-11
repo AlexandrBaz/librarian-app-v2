@@ -4,11 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import ru.bazhenov.librarianapp.dto.BookDto;
+import ru.bazhenov.librarianapp.dto.ChangePersonDto;
 import ru.bazhenov.librarianapp.dto.PersonDto;
 import ru.bazhenov.librarianapp.mapper.BookMapper;
 import ru.bazhenov.librarianapp.mapper.PersonBookToBookDtoMapper;
 import ru.bazhenov.librarianapp.mapper.PersonMapper;
 import ru.bazhenov.librarianapp.models.Person;
+import ru.bazhenov.librarianapp.models.PersonRole;
 
 import java.util.List;
 import java.util.Locale;
@@ -24,12 +26,12 @@ public class ManagerService {
     private final PersonBookToBookDtoMapper personBookToBookDtoMapper;
 
     @Autowired
-    public ManagerService(PersonMapper personMapper, PersonService personService, PersonBookService personBookService, BookService bookService, BookMapper bookMapper, PersonBookToBookDtoMapper personBookToBookDtoMapper) {
-        this.personMapper = personMapper;
+    public ManagerService(PersonService personService, PersonBookService personBookService, BookService bookService, PersonMapper personMapper, BookMapper bookMapper, PersonBookToBookDtoMapper personBookToBookDtoMapper) {
         this.personService = personService;
         this.personBookService = personBookService;
         this.bookService = bookService;
         this.bookMapper = bookMapper;
+        this.personMapper = personMapper;
         this.personBookToBookDtoMapper = personBookToBookDtoMapper;
     }
 
@@ -37,23 +39,20 @@ public class ManagerService {
         return personMapper.toDTO(personService.getPersonByLogin(login));
     }
 
-    public List<BookDto> getListOfDebtors() {
-        return personBookService.getAllPersonBook().stream()
-                .map(personBookToBookDtoMapper::toDTO)
-                .filter(BookDto::getBookReturnIsExpired)
-                .toList();
-    }
-
-    public List<PersonDto> getListBannedUsers() {
-        return personService.getAllBannedUsers().stream()
-                .map(personMapper::toDTO)
-                .toList();
-    }
-
+    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
     public PersonDto getUserDto(long id) {
         return personMapper.toDTO(personService.getPerson(id));
     }
 
+    public void addBook(BookDto bookDto) {
+        bookService.addBook(bookMapper.toEntity(bookDto));
+    }
+
+    public void updateUser(ChangePersonDto managerDto) {
+        personService.updateUser(managerDto);
+    }
+
+    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
     public void changePersonStatus(long id) {
         Person person = personService.getPerson(id);
         if (person.getIsBanned()) {
@@ -64,6 +63,21 @@ public class ManagerService {
         personService.changePersonStatus(person);
     }
 
+    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+    public List<BookDto> getListOfDebtors() {
+        return personBookService.getAllPersonBook().stream()
+                .map(personBookToBookDtoMapper::toDTO)
+                .filter(BookDto::getBookReturnIsExpired)
+                .toList();
+    }
+
+    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+    public List<PersonDto> getListBannedUsers() {
+        return personService.getAllBannedUsers().stream()
+                .map(personMapper::toDTO)
+                .toList();
+    }
+
     public List<BookDto> searchBook(String key) {
         return bookService.getAllBooks("name").stream()
                 .map(bookMapper::toDTO)
@@ -71,9 +85,17 @@ public class ManagerService {
                 .toList();
     }
 
+    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
     public List<BookDto> getAllBooks() {
         return bookService.getAllBooks("name").stream()
                 .map(bookMapper::toDTO)
+                .toList();
+    }
+
+    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+    public List<PersonDto> getAllUsers() {
+        return personService.getAllUser(PersonRole.USER).stream()
+                .map(personMapper::toDTO)
                 .toList();
     }
 }

@@ -25,10 +25,13 @@ public class BookValidator implements Validator{
     public void validate(@NotNull Object target, @NotNull Errors errors) {
         BookDto bookDto = (BookDto) target;
         if (!othersUtils.isCyrillic(bookDto.getName())){
-            errors.rejectValue("fullName","", "Название книги должно быть на русском языке");
+            errors.rejectValue("name","", "Название книги должно быть на русском языке");
         }
         if(!othersUtils.isCyrillic(bookDto.getAuthor())){
             errors.rejectValue("author","", "Имя автора на должно быть на русском языке");
+        }
+        if(bookDto.getBooksCount() <= 0L ){
+            errors.rejectValue("booksCount","", "Количество книг должно быть больше нуля");
         }
     }
 }

@@ -5,6 +5,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+import ru.bazhenov.librarianapp.dto.ChangePersonDto;
 import ru.bazhenov.librarianapp.dto.PersonDto;
 import ru.bazhenov.librarianapp.service.PersonService;
 
@@ -27,11 +28,11 @@ public class ChangeProfileValidator implements Validator {
 
     @Override
     public void validate(@NotNull Object target, @NotNull Errors errors) {
-        PersonDto personDto = (PersonDto) target;
+        ChangePersonDto personDto = (ChangePersonDto) target;
         if (!othersUtils.isCyrillic(personDto.getFullName())) {
             errors.rejectValue("fullName", "", "ФИО должно быть на русском языке");
         }
-        if (personDto.getNewPassword() != null) {
+        if (personDto.getNewPassword() != null && !personDto.getNewPassword().isBlank()) {
             String oldPasswordFromEntity = personService.getPersonByLogin(personDto.getLogin()).getPassword();
             CharSequence oldPasswordFromDto = personDto.getPassword();
             CharSequence newPasswordFromDto = personDto.getNewPassword();

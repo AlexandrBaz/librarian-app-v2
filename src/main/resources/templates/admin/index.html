@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/style.css" media="screen">
+<head>
+    <meta charset="UTF-8">
+    <title>Панель администратора</title>
+</head>
+<body>
+<div>
+    <table>
+        <tr>
+            <td colspan="2" th:text="${adminDto.getFullName()}" style="text-align: left">Имя пользователя</td>
+            <td><a th:href="@{/admin/settings}" text="Профиль" style="text-align: center">Профиль</a></td>
+            <td><a th:href="@{/logout}" text="Выйти" style="text-align: right">Выйти</a></td>
+        </tr>
+        <tr>
+            <td><a th:href="@{/admin/index}" class="active">Статистика</a></td>
+            <td><a th:href="@{/admin/all-users}">Список пользователей</a></td>
+            <td><a th:href="@{/admin/all-managers}">Список менеджеров</a></td>
+            <td><a th:href="@{/admin/add-manager}">Добавить менеджера</a></td>
+        </tr>
+    </table>
+</div>
+<hr>
+<div>
+    <table class="profile">
+        <tr>
+            <td><p>Количество пользователей :</p></td>
+            <td th:text="${allUsers}">Количество пользователей</td>
+        </tr>
+        <tr>
+            <td><p>Количество менеджеров :</p></td>
+            <td th:text="${allManagers}">Количество менеджеров</td>
+        </tr>
+        <tr>
+            <td><p>Количество книг :</p></td>
+            <td th:text="${allBooks}">Количество книг</td>
+        </tr>
+        <tr>
+            <td><p>Количество не возвращенный книг :</p></td>
+            <td th:text="${booksNotReturned}">Количество книг</td>
+        </tr>
+        <tr>
+            <td><p>Количество заблокированных пользователей :</p></td>
+            <td th:text="${bannedUsers}">Количество книг</td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

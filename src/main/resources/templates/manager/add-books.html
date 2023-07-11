@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/style.css" media="screen">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить книгу</title>
+</head>
+<body>
+<div>
+    <table>
+        <tr>
+            <td colspan="2" th:text="${managerDto.getFullName()}" style="text-align: left">Имя пользователя</td>
+            <td><a th:href="@{/manager/settings}" text="Профиль">Профиль</a></td>
+            <td><a th:href="@{/logout}" text="Выйти" style="text-align: right">Выйти</a></td>
+        </tr>
+        <tr>
+            <td colspan="4">
+                <hr>
+            </td>
+        </tr>
+        <tr>
+            <td><a th:href="@{/manager/index}">Должники</a></td>
+            <td><a th:href="@{/manager/users}">Пользователи</a></td>
+            <td><a th:href="@{/manager/books}">Книги</a></td>
+            <td><a th:href="@{/manager/add-books}" class="active">Добавить книгу</a></td>
+        </tr>
+    </table>
+</div>
+<hr>
+<div th:if="${bookSave != null}" style="text-align: center; color: chocolate">Книга сохранена</div>
+<div>
+    <form th:method="POST" th:action="@{/manager/add-books}" th:object="${bookDto}" class="profile">
+        <table>
+            <tr>
+                <td colspan="2" style="text-align: center">
+                    <div style="color: red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">bookName Error
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="name">Введите название книги</label></td>
+                <td><input type="text" th:field="*{name}" id="name"/></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center">
+                    <div style="color: red" th:if="${#fields.hasErrors('author')}" th:errors="*{author}">author
+                        Error
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="author">Введите автора книги</label></td>
+                <td><input type="text" th:field="*{author}" id="author"/></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center">
+                    <div style="color: red" th:if="${#fields.hasErrors('year')}" th:errors="*{year}">year
+                        Error
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="year">Введите год выпуска</label></td>
+                <td><input type="text" th:field="*{year}" id="year"/></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: center">
+                    <div style="color: red" th:if="${#fields.hasErrors('booksCount')}" th:errors="*{booksCount}">Email
+                        Error
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td><label for="booksCount">Введите количество книг</label></td>
+                <td><input type="text" th:field="*{booksCount}" id="booksCount"/></td>
+            </tr>
+            <tr>
+                <td><input type="submit" value="Добавить книги в библиотеку"/></td>
+            </tr>
+        </table>
+    </form>
+</div>
+</body>
+</html>

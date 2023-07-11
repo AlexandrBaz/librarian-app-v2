@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/style.css" media="screen">
+<head>
+    <meta charset="UTF-8">
+    <title>Все менеджеры</title>
+</head>
+<body>
+<div>
+    <table>
+        <tr>
+            <td colspan="2" th:text="${adminDto.getFullName()}" style="text-align: left">Имя пользователя</td>
+            <td><a th:href="@{/admin/settings}" text="Профиль" style="text-align: center">Профиль</a></td>
+            <td><a th:href="@{/logout}" text="Выйти" style="text-align: right">Выйти</a></td>
+        </tr>
+        <tr>
+            <td><a th:href="@{/admin/index}">Статистика</a></td>
+            <td><a th:href="@{/admin/all-users}">Список пользователей</a></td>
+            <td><a th:href="@{/admin/all-managers}" class="active">Список менеджеров</a></td>
+            <td><a th:href="@{/admin/add-manager}">Добавить менеджера</a></td>
+        </tr>
+    </table>
+</div>
+<hr>
+<div>
+    <p><strong>Профиль менеджера :</strong></p>
+    <table>
+        <tr>
+            <th>ФИО</th>
+            <th>Email</th>
+            <th>Статус</th>
+            <th></th>
+        </tr>
+        <tr th:each="managerDto : ${managerList}">
+            <td th:text="${managerDto.getFullName()}" style="text-align: left">ФИО</td>
+            <td th:text="${managerDto.getEmail()}" style="text-align: center">Email</td>
+            <td th:text="${managerDto.getIsBanned()} ? 'Заблокированный' : 'Активный' ">Статус</td>
+            <td>
+                <form th:method="PATCH" th:action="@{/admin/change-status/{id}/{url}(id=${managerDto.getId()}, url='all-managers')}">
+                    <input type="submit" value="Изменить статус"/>
+                </form>
+<!--                th:href="@{/bla/{id}/bla/{id2} (id=${object1.id}, id2=${object2.id})}"-->
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>
