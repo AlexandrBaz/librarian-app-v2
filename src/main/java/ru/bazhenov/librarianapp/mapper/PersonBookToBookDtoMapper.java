@@ -16,7 +16,7 @@ import java.util.Objects;
 public class PersonBookToBookDtoMapper extends AbstractMapper<PersonBook, BookDto>{
 
     private final ModelMapper modelMapper;
-    @Value(value = "${bookDaysToExpired}")
+    @Value(value = "${book.bookDaysToExpired}")
     private long bookDaysToExpired;
     @Autowired
     public PersonBookToBookDtoMapper(ModelMapper modelMapper) {
