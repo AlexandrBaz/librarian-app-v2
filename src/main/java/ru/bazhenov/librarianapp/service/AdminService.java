@@ -3,6 +3,7 @@ package ru.bazhenov.librarianapp.service;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import ru.bazhenov.librarianapp.dto.BookDto;
+import ru.bazhenov.librarianapp.dto.ChangePersonDto;
 import ru.bazhenov.librarianapp.dto.PersonDto;
 import ru.bazhenov.librarianapp.mapper.PersonMapper;
 import ru.bazhenov.librarianapp.models.PersonRole;
@@ -69,5 +70,9 @@ public class AdminService {
 
     public void registerNewUser(PersonDto personDto) {
         personService.registerNewUser(personDto, PersonRole.MANAGER);
+    }
+
+    public void updateUser(ChangePersonDto adminDto) {
+        personService.updateUser(adminDto);
     }
 }

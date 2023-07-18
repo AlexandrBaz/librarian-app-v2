@@ -21,7 +21,7 @@ public class Book extends AbstractEntity {
     @Column(name = "author", nullable = false)
     private String author;
     @Pattern(regexp = "^[12][0-9]{3}$|^[12][0-9]{3}-[12][0-9]{3}$", message = "Введите год выпуска, формат year или year-year")
-    @Column(name = "year", nullable = false)
+    @Column(name = "`year`", nullable = false)
     private String year;
     @Column(name = "books_count", nullable = false)
     private long booksCount;

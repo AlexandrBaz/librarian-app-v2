@@ -50,18 +50,18 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/auth/login", "/auth/registration", "/error", "/css/**", "/img/**", "/scripts/**").permitAll()
+                        .requestMatchers("/auth/login", "/auth/registration", "/error", "/css/**", "/img/**", "/scripts/**", "/").permitAll()
                         .anyRequest().hasAnyRole("USER", "ADMIN", "MANAGER"))
                 .formLogin(form -> form
                         .loginPage("/auth/login")
                         .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/default", true)
-                        .failureUrl("/auth/login?error")
+                        .failureUrl("/auth/login?error" )
                         .permitAll())
                 .logout(
                         logout -> logout
                                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                                .logoutSuccessUrl("/auth/login")
+                                .logoutSuccessUrl("/")
                                 .permitAll()
                 );
         return http.build();

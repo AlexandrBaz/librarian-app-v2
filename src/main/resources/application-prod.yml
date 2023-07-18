@@ -20,8 +20,7 @@ spring:
       filter:
         enabled: true
 
-#  profiles:
-#    active: default
+bookDaysToExpired: 30
 
 server:
   port: 8080

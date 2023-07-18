@@ -6,8 +6,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.bazhenov.librarianapp.dto.ChangePersonDto;
 import ru.bazhenov.librarianapp.dto.PersonDto;
 import ru.bazhenov.librarianapp.service.AdminService;
+import ru.bazhenov.librarianapp.util.ChangeProfileValidator;
 import ru.bazhenov.librarianapp.util.PersonValidator;
 
 import java.util.Optional;
@@ -17,10 +19,12 @@ import java.util.Optional;
 public class AdminController {
     private final AdminService adminService;
     private final PersonValidator personValidator;
+    private final ChangeProfileValidator changeProfileValidator;
 
-    public AdminController(AdminService adminService, PersonValidator personValidator) {
+    public AdminController(AdminService adminService, PersonValidator personValidator, ChangeProfileValidator changeProfileValidator) {
         this.adminService = adminService;
         this.personValidator = personValidator;
+        this.changeProfileValidator = changeProfileValidator;
     }
 
     @GetMapping("/index")
@@ -94,5 +98,29 @@ public class AdminController {
         }
         adminService.registerNewUser(personDto);
         return "redirect:/admin/add-manager?status=ok";
+    }
+
+    @GetMapping("/settings")
+    private String managerSettings(HttpServletRequest request, Model model, @RequestParam("status") Optional<String> status){
+        PersonDto adminDto = adminService.getAdminDto(request.getUserPrincipal().getName());
+        model.addAttribute("adminDto", adminDto);
+        if(status.isPresent()){
+            String changeSave = status.orElse(null);
+            model.addAttribute("changeSave", changeSave);
+        }
+        return "/admin/settings";
+    }
+
+    @PatchMapping("/settings")
+    private String changeProfile(@ModelAttribute("adminDto") @Valid ChangePersonDto adminDto,
+                                 BindingResult bindingResult, HttpServletRequest request){
+        PersonDto currentAdminDto = adminService.getAdminDto(request.getUserPrincipal().getName());
+        adminDto.setLogin(currentAdminDto.getLogin());
+        changeProfileValidator.validate(adminDto, bindingResult);
+        if(bindingResult.hasErrors()){
+            return "/admin/settings";
+        }
+        adminService.updateUser(adminDto);
+        return "redirect:/admin/settings?status=ok";
     }
 }
