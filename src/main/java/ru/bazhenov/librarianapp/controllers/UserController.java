@@ -36,6 +36,9 @@ public class UserController {
     @GetMapping("/index")
     public String getIndex(HttpServletRequest request, Model model) {
         PersonDto userDto = userService.getUserDto(request.getUserPrincipal().getName());
+        if (userDto.getIsBanned()){
+            return "redirect:/banned";
+        }
         model.addAttribute("userDto", userDto);
         if (!userDto.getPersonBookList().isEmpty()){
             model.addAttribute("bookList", userService.getUserBooks(request.getUserPrincipal().getName()));
@@ -51,6 +54,9 @@ public class UserController {
                            @RequestParam("size") Optional<Integer> size,
                            @RequestParam("by") Optional<String> sortBy) {
         PersonDto userDto = userService.getUserDto(request.getUserPrincipal().getName());
+        if (userDto.getIsBanned()){
+            return "redirect:/banned";
+        }
         model.addAttribute("userDto", userDto);
 
         if(search.isPresent()){
@@ -89,6 +95,9 @@ public class UserController {
     @GetMapping("/settings")
     public String changeUserProfile(HttpServletRequest request, Model model, @RequestParam("status") Optional<String> status){
         PersonDto userDto = userService.getUserDto(request.getUserPrincipal().getName());
+        if (userDto.getIsBanned()){
+            return "redirect:/banned";
+        }
         model.addAttribute("userDto", userDto);
         if(status.isPresent()){
             String changeSave = status.orElse(null);

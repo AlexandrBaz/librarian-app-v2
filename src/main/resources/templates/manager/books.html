@@ -21,7 +21,7 @@
         <tr>
             <td><a th:href="@{/manager/index}">Должники</a></td>
             <td><a th:href="@{/manager/users}">Пользователи</a></td>
-            <td><a th:href="@{/manager/books}"  class="active">Книги</a></td>
+            <td><a th:href="@{/manager/books}" class="active">Книги</a></td>
             <td><a th:href="@{/manager/add-books}">Добавить книгу</a></td>
         </tr>
     </table>
@@ -59,23 +59,23 @@
     <table>
         <tr>
             <td style="width:40%" th:switch="${sortBy}">
-                <a th:case="'name'" th:href="@{/manager/books(size=${bookDtoList.size}, by='nameDesc')}">По названию &darr;</a>
-                <a th:case="'nameDesc'" th:href="@{/manager/books(size=${bookDtoList.size}, by='name')}">По названию &uarr;</a>
+                <a th:case="'name'" th:href="@{/manager/books(size=${bookDtoList.size}, by='nameDesc')}" class="active">По названию &darr;</a>
+                <a th:case="'nameDesc'" th:href="@{/manager/books(size=${bookDtoList.size}, by='name')}" class="active">По названию &uarr;</a>
                 <a th:case="*" th:href="@{/manager/books(size=${bookDtoList.size}, by='nameDesc')}">По названию &darr;</a>
             </td>
             <td style="width:20%" th:switch="${sortBy}">
-                <a th:case="'author'" th:href="@{/manager/books(size=${bookDtoList.size}, by='authorDesc')}">По Автору &darr;</a>
-                <a th:case="'authorDesc'" th:href="@{/manager/books(size=${bookDtoList.size}, by='author')}">По Автору &uarr;</a>
+                <a th:case="'author'" th:href="@{/manager/books(size=${bookDtoList.size}, by='authorDesc')}" class="active">По Автору &darr;</a>
+                <a th:case="'authorDesc'" th:href="@{/manager/books(size=${bookDtoList.size}, by='author')}" class="active">По Автору &uarr;</a>
                 <a th:case="*" th:href="@{/manager/books(size=${bookDtoList.size}, by='authorDesc')}">По Автору &darr;</a>
             </td>
             <td style="width:20%" th:switch="${sortBy}">
-                <a th:case="'year'" th:href="@{/manager/books(size=${bookDtoList.size}, by='yearDesc')}">По году выпуска &darr;</a>
-                <a th:case="'yearDesc'" th:href="@{/manager/books(size=${bookDtoList.size}, by='year')}">По году выпуска &uarr;</a>
+                <a th:case="'year'" th:href="@{/manager/books(size=${bookDtoList.size}, by='yearDesc')}" class="active">По году выпуска &darr;</a>
+                <a th:case="'yearDesc'" th:href="@{/manager/books(size=${bookDtoList.size}, by='year')}" class="active">По году выпуска &uarr;</a>
                 <a th:case="*" th:href="@{/manager/books(size=${bookDtoList.size}, by='yearDesc')}">По году выпуска &darr;</a>
             </td>
             <td style="width:20%" th:switch="${sortBy}">
-                <a th:case="'count'" th:href="@{/manager/books(size=${bookDtoList.size}, by='countDesc')}">По количеству &darr;</a>
-                <a th:case="'countDesc'" th:href="@{/manager/books(size=${bookDtoList.size}, by='count')}">По количеству &uarr;</a>
+                <a th:case="'count'" th:href="@{/manager/books(size=${bookDtoList.size}, by='countDesc')}" class="active">По количеству &darr;</a>
+                <a th:case="'countDesc'" th:href="@{/manager/books(size=${bookDtoList.size}, by='count')}" class="active">По количеству &uarr;</a>
                 <a th:case="*" th:href="@{/manager/books(size=${bookDtoList.size}, by='countDesc')}">По количеству &darr;</a>
             </td>
         </tr>

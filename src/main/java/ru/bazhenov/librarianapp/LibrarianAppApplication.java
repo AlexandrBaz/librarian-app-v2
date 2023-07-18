@@ -25,5 +25,4 @@ public class LibrarianAppApplication {
 				.setFieldAccessLevel(PRIVATE);
 		return mapper;
 	}
-
 }
