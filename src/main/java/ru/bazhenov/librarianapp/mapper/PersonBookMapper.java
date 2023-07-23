@@ -7,21 +7,21 @@ import org.springframework.stereotype.Component;
 import ru.bazhenov.librarianapp.dto.PersonBookDto;
 import ru.bazhenov.librarianapp.models.PersonBook;
 import ru.bazhenov.librarianapp.service.BookService;
-import ru.bazhenov.librarianapp.service.PersonService;
+import ru.bazhenov.librarianapp.service.PersonServiceImpl;
 
 import java.util.Objects;
 
 @Component
 public class PersonBookMapper extends AbstractMapper<PersonBook, PersonBookDto>{
     private final ModelMapper modelMapper;
-    private final PersonService personService;
+    private final PersonServiceImpl personServiceImpl;
     private final BookService bookService;
 
     @Autowired
-    public PersonBookMapper(ModelMapper modelMapper, PersonService personService, BookService bookService) {
+    public PersonBookMapper(ModelMapper modelMapper, PersonServiceImpl personServiceImpl, BookService bookService) {
         super(PersonBook.class, PersonBookDto.class);
         this.modelMapper = modelMapper;
-        this.personService = personService;
+        this.personServiceImpl = personServiceImpl;
         this.bookService = bookService;
     }
     @PostConstruct
@@ -48,6 +48,6 @@ public class PersonBookMapper extends AbstractMapper<PersonBook, PersonBookDto>{
         destination.setBook(bookService.getBook(source.getBookId()));
     }
     void mapPersonField(PersonBookDto source, PersonBook destination){
-        destination.setPerson(personService.getPerson(source.getPersonId()));
+        destination.setPerson(personServiceImpl.getPersonById(source.getPersonId()));
     }
 }

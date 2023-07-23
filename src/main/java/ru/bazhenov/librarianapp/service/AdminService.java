@@ -14,20 +14,20 @@ import java.util.List;
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class AdminService {
 
-    private final PersonService personService;
+    private final PersonServiceImpl personServiceImpl;
     private final ManagerService managerService;
     private final UserService userService;
     private final PersonMapper personMapper;
 
-    public AdminService(PersonService personService, ManagerService managerService, UserService userService, PersonMapper personMapper) {
-        this.personService = personService;
+    public AdminService(PersonServiceImpl personServiceImpl, ManagerService managerService, UserService userService, PersonMapper personMapper) {
+        this.personServiceImpl = personServiceImpl;
         this.managerService = managerService;
         this.userService = userService;
         this.personMapper = personMapper;
     }
 
     public PersonDto getAdminDto(String login) {
-        return personMapper.toDTO(personService.getPersonByLogin(login));
+        return personMapper.toDTO(personServiceImpl.getPersonByLogin(login));
     }
 
     public List<PersonDto> getAllUsers() {
@@ -35,7 +35,7 @@ public class AdminService {
     }
 
     public List<PersonDto> getAllManagers() {
-        return personService.getAllUser(PersonRole.MANAGER).stream()
+        return personServiceImpl.getAllUser(PersonRole.MANAGER).stream()
                 .map(personMapper::toDTO)
                 .toList();
     }
@@ -69,10 +69,10 @@ public class AdminService {
     }
 
     public void registerNewUser(PersonDto personDto) {
-        personService.registerNewUser(personDto, PersonRole.MANAGER);
+        personServiceImpl.registerNewUser(personDto, PersonRole.MANAGER);
     }
 
     public void updateUser(ChangePersonDto adminDto) {
-        personService.updateUser(adminDto);
+        personServiceImpl.updateUser(adminDto);
     }
 }

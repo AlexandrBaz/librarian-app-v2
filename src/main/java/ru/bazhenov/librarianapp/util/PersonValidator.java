@@ -6,16 +6,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.bazhenov.librarianapp.dto.PersonDto;
-import ru.bazhenov.librarianapp.service.PersonService;
+import ru.bazhenov.librarianapp.service.PersonServiceImpl;
 
 @Component
 public class PersonValidator implements Validator {
-    private final PersonService personService;
+    private final PersonServiceImpl personServiceImpl;
     private final OthersUtils othersUtils;
 
     @Autowired
-    public PersonValidator(PersonService personService, OthersUtils othersUtils) {
-        this.personService = personService;
+    public PersonValidator(PersonServiceImpl personServiceImpl, OthersUtils othersUtils) {
+        this.personServiceImpl = personServiceImpl;
         this.othersUtils = othersUtils;
     }
 
@@ -30,10 +30,10 @@ public class PersonValidator implements Validator {
         if (!othersUtils.isCyrillic(personDto.getFullName())){
             errors.rejectValue("fullName","", "ФИО должно быть на русском языке");
         }
-        if(personService.personByLoginIsPresent(personDto.getLogin())){
+        if(personServiceImpl.personByLoginIsPresent(personDto.getLogin())){
             errors.rejectValue("login", "", "Пользователь с таким логином уже существует");
         }
-        if (personService.PersonByEmailIsPresent(personDto.getEmail())){
+        if (personServiceImpl.PersonByEmailIsPresent(personDto.getEmail())){
             errors.rejectValue("email", "", "Такой email уже используется");
         }
     }

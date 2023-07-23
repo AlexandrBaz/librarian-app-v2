@@ -18,7 +18,7 @@ import java.util.Locale;
 @Service
 @PreAuthorize("hasRole('ROLE_MANAGER')")
 public class ManagerService {
-    private final PersonService personService;
+    private final PersonServiceImpl personServiceImpl;
     private final PersonBookService personBookService;
     private final BookService bookService;
     private final PersonMapper personMapper;
@@ -26,8 +26,8 @@ public class ManagerService {
     private final PersonBookToBookDtoMapper personBookToBookDtoMapper;
 
     @Autowired
-    public ManagerService(PersonService personService, PersonBookService personBookService, BookService bookService, PersonMapper personMapper, BookMapper bookMapper, PersonBookToBookDtoMapper personBookToBookDtoMapper) {
-        this.personService = personService;
+    public ManagerService(PersonServiceImpl personServiceImpl, PersonBookService personBookService, BookService bookService, PersonMapper personMapper, BookMapper bookMapper, PersonBookToBookDtoMapper personBookToBookDtoMapper) {
+        this.personServiceImpl = personServiceImpl;
         this.personBookService = personBookService;
         this.bookService = bookService;
         this.bookMapper = bookMapper;
@@ -36,12 +36,12 @@ public class ManagerService {
     }
 
     public PersonDto getManagerDto(String login) {
-        return personMapper.toDTO(personService.getPersonByLogin(login));
+        return personMapper.toDTO(personServiceImpl.getPersonByLogin(login));
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
     public PersonDto getUserDto(long id) {
-        return personMapper.toDTO(personService.getPerson(id));
+        return personMapper.toDTO(personServiceImpl.getPersonById(id));
     }
 
     public void addBook(BookDto bookDto) {
@@ -49,18 +49,18 @@ public class ManagerService {
     }
 
     public void updateUser(ChangePersonDto managerDto) {
-        personService.updateUser(managerDto);
+        personServiceImpl.updateUser(managerDto);
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
     public void changePersonStatus(long id) {
-        Person person = personService.getPerson(id);
+        Person person = personServiceImpl.getPersonById(id);
         if (person.getIsBanned()) {
             person.setIsBanned(Boolean.FALSE);
         } else {
             person.setIsBanned(Boolean.TRUE);
         }
-        personService.changePersonStatus(person);
+        personServiceImpl.changePersonStatus(person);
     }
 
     @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
@@ -73,7 +73,7 @@ public class ManagerService {
 
     @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
     public List<PersonDto> getListBannedUsers() {
-        return personService.getAllBannedUsers().stream()
+        return personServiceImpl.getAllBannedUsers().stream()
                 .map(personMapper::toDTO)
                 .toList();
     }
@@ -94,7 +94,7 @@ public class ManagerService {
 
     @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
     public List<PersonDto> getAllUsers() {
-        return personService.getAllUser(PersonRole.USER).stream()
+        return personServiceImpl.getAllUser(PersonRole.USER).stream()
                 .map(personMapper::toDTO)
                 .toList();
     }

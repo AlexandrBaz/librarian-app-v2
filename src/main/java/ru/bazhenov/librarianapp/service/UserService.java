@@ -17,16 +17,16 @@ import java.util.*;
 @PreAuthorize("hasRole('ROLE_USER')")
 public class UserService {
     private final BookService bookService;
-    private final PersonService personService;
+    private final PersonServiceImpl personServiceImpl;
     private final PersonBookService personBookService;
     private final PersonMapper personMapper;
     private final BookMapper bookMapper;
     private final PersonBookToBookDtoMapper personBookToBookDtoMapper;
 
     @Autowired
-    public UserService(BookService bookService, PersonService personService, PersonBookService personBookService, PersonMapper personMapper, BookMapper bookMapper, PersonBookToBookDtoMapper personBookToBookDtoMapper) {
+    public UserService(BookService bookService, PersonServiceImpl personServiceImpl, PersonBookService personBookService, PersonMapper personMapper, BookMapper bookMapper, PersonBookToBookDtoMapper personBookToBookDtoMapper) {
         this.bookService = bookService;
-        this.personService = personService;
+        this.personServiceImpl = personServiceImpl;
         this.personBookService = personBookService;
         this.personMapper = personMapper;
         this.bookMapper = bookMapper;
@@ -34,15 +34,15 @@ public class UserService {
     }
 
     public PersonDto getUserDto(String login) {
-        return personMapper.toDTO(personService.getPersonByLogin(login));
+        return personMapper.toDTO(personServiceImpl.getPersonByLogin(login));
     }
     public void updateUser(ChangePersonDto personDto) {
-        personService.updateUser(personDto);
+        personServiceImpl.updateUser(personDto);
     }
 
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')" )
     public List<BookDto> getUserBooks(String login) {
-        return personService.getPersonByLogin(login).getPersonBookList().stream()
+        return personServiceImpl.getPersonByLogin(login).getPersonBookList().stream()
                 .map(personBookToBookDtoMapper::toDTO)
                 .toList();
     }
@@ -61,12 +61,12 @@ public class UserService {
     }
 
     public void addBookToUser(String login, long bookId) {
-        personBookService.addBookToUser(personService.getPersonByLogin(login), bookService.getBook(bookId));
+        personBookService.addBookToUser(personServiceImpl.getPersonByLogin(login), bookService.getBook(bookId));
         bookService.reduceBookCount(bookId);
     }
 
     public void returnBookFromPerson(String login, long bookId) {
-        Person userEntity = personService.getPersonByLogin(login);
+        Person userEntity = personServiceImpl.getPersonByLogin(login);
         personBookService.returnBookFromPerson(userEntity, bookService.getBook(bookId));
         bookService.increaseBookCount(bookId);
     }

@@ -7,16 +7,16 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.bazhenov.librarianapp.dto.ChangePersonDto;
 import ru.bazhenov.librarianapp.dto.PersonDto;
-import ru.bazhenov.librarianapp.service.PersonService;
+import ru.bazhenov.librarianapp.service.PersonServiceImpl;
 
 @Component
 public class ChangeProfileValidator implements Validator {
-    private final PersonService personService;
+    private final PersonServiceImpl personServiceImpl;
     private final OthersUtils othersUtils;
     private final PasswordEncoder passwordEncoder;
 
-    public ChangeProfileValidator(PersonService personService, OthersUtils othersUtils, PasswordEncoder passwordEncoder) {
-        this.personService = personService;
+    public ChangeProfileValidator(PersonServiceImpl personServiceImpl, OthersUtils othersUtils, PasswordEncoder passwordEncoder) {
+        this.personServiceImpl = personServiceImpl;
         this.othersUtils = othersUtils;
         this.passwordEncoder = passwordEncoder;
     }
@@ -33,7 +33,7 @@ public class ChangeProfileValidator implements Validator {
             errors.rejectValue("fullName", "", "ФИО должно быть на русском языке");
         }
         if (personDto.getNewPassword() != null && !personDto.getNewPassword().isBlank()) {
-            String oldPasswordFromEntity = personService.getPersonByLogin(personDto.getLogin()).getPassword();
+            String oldPasswordFromEntity = personServiceImpl.getPersonByLogin(personDto.getLogin()).getPassword();
             CharSequence oldPasswordFromDto = personDto.getPassword();
             CharSequence newPasswordFromDto = personDto.getNewPassword();
             if (!passwordEncoder.matches(oldPasswordFromDto, oldPasswordFromEntity)){
