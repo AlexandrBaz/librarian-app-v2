@@ -2,6 +2,7 @@ package ru.bazhenov.librarianapp.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -13,7 +14,6 @@ import ru.bazhenov.librarianapp.dto.ChangePersonDto;
 import ru.bazhenov.librarianapp.dto.PersonDto;
 import ru.bazhenov.librarianapp.models.PageableData;
 import ru.bazhenov.librarianapp.service.ManagerService;
-import ru.bazhenov.librarianapp.service.UserService;
 import ru.bazhenov.librarianapp.util.BookValidator;
 import ru.bazhenov.librarianapp.util.ChangeProfileValidator;
 import ru.bazhenov.librarianapp.util.Pagination;
@@ -23,24 +23,14 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/manager")
 public class ManagerController {
-    private final ManagerService managerService;
-    private final UserService userService;
-    private final Pagination pagination;
-    private final BookValidator bookValidator;
-    private final ChangeProfileValidator changeProfileValidator;
-
-    @Autowired
-    public ManagerController(ManagerService managerService, UserService userService, Pagination pagination, BookValidator bookValidator, ChangeProfileValidator changeProfileValidator) {
-        this.managerService = managerService;
-        this.userService = userService;
-        this.pagination = pagination;
-        this.bookValidator = bookValidator;
-        this.changeProfileValidator = changeProfileValidator;
-    }
+    private ManagerService managerService;
+    private Pagination pagination;
+    private BookValidator bookValidator;
+    private ChangeProfileValidator changeProfileValidator;
 
     @GetMapping("/index")
-    private String getIndex(HttpServletRequest request, Model model) {
-        PersonDto managerDto = managerService.getManagerDto(request.getUserPrincipal().getName());
+    private @NotNull String getIndex(@NotNull HttpServletRequest request, @NotNull Model model) {
+        PersonDto managerDto = managerService.getProfileDto(request.getUserPrincipal().getName());
         model.addAttribute("managerDto", managerDto);
         model.addAttribute("bookDtoExpiredList", managerService.getListOfDebtors());
         model.addAttribute("bannedUserList", managerService.getListBannedUsers());
@@ -48,27 +38,27 @@ public class ManagerController {
     }
 
     @GetMapping("/user-{id}")
-    private String getUser(HttpServletRequest request, Model model, @PathVariable("id") long id) {
-        PersonDto managerDto = managerService.getManagerDto(request.getUserPrincipal().getName());
+    private @NotNull String getUser(@NotNull HttpServletRequest request, @NotNull Model model, @PathVariable("id") long id) {
+        PersonDto managerDto = managerService.getProfileDto(request.getUserPrincipal().getName());
         PersonDto userDto = managerService.getUserDto(id);
         model.addAttribute("managerDto", managerDto);
         model.addAttribute("userDto", userDto);
-        model.addAttribute("bookList", userService.getUserBooks(userDto.getLogin()));
+        model.addAttribute("bookList", managerService.getUserBooks(userDto.getLogin()));
         return "/manager/user";
     }
 
     @PatchMapping("/change-status-{id}")
-    private String changeUserStatus(@PathVariable("id") long id) {
+    private @NotNull String changeUserStatus(@PathVariable("id") long id) {
         managerService.changePersonStatus(id);
         return "redirect:/manager/user-{id}";
     }
 
     @GetMapping("/books")
-    private String allBooks(HttpServletRequest request, Model model,
-                            @RequestParam("search") Optional<String> search,
-                            @RequestParam("page") Optional<Integer> page,
-                            @RequestParam("size") Optional<Integer> size,
-                            @RequestParam("by") Optional<String> sortBy) {
+    private @NotNull String allBooks(HttpServletRequest request, Model model,
+                                     @RequestParam("search") @NotNull Optional<String> search,
+                                     @RequestParam("page") Optional<Integer> page,
+                                     @RequestParam("size") Optional<Integer> size,
+                                     @RequestParam("by") Optional<String> sortBy) {
         if (search.isPresent()) {
             String key = search.map(Object::toString).orElse(null);
             if (!key.isBlank()) {
@@ -86,24 +76,24 @@ public class ManagerController {
             model.addAttribute("pageNumbers", pagination.getPageNumbers(totalPages));
         }
 
-        PersonDto managerDto = managerService.getManagerDto(request.getUserPrincipal().getName());
+        PersonDto managerDto = managerService.getProfileDto(request.getUserPrincipal().getName());
         model.addAttribute("managerDto", managerDto);
         model.addAttribute("sortBy", sortBy.map(Object::toString).orElse(null));
         return "/manager/books";
     }
 
     @GetMapping("/all-users")
-    public String getAllUsers(HttpServletRequest request, Model model){
-        PersonDto managerDto = managerService.getManagerDto(request.getUserPrincipal().getName());
+    public String getAllUsers(@NotNull HttpServletRequest request, @NotNull Model model){
+        PersonDto managerDto = managerService.getProfileDto(request.getUserPrincipal().getName());
         model.addAttribute("managerDto", managerDto);
         model.addAttribute("userDtoList", managerService.getAllUsers());
         return "/manager/all-users";
     }
 
     @GetMapping("/add-books")
-    public String addBooks(HttpServletRequest request, @ModelAttribute("bookDto") BookDto bookDto,
-                           Model model, @RequestParam("status") Optional<String> status){
-        PersonDto managerDto = managerService.getManagerDto(request.getUserPrincipal().getName());
+    public String addBooks(@NotNull HttpServletRequest request, @ModelAttribute("bookDto") BookDto bookDto,
+                           @NotNull Model model, @RequestParam("status") @NotNull Optional<String> status){
+        PersonDto managerDto = managerService.getProfileDto(request.getUserPrincipal().getName());
         model.addAttribute("managerDto", managerDto);
         if(status.isPresent()){
             String bookSave = status.orElse(null);
@@ -113,9 +103,9 @@ public class ManagerController {
     }
 
     @PostMapping("/add-books")
-    public String postBook(HttpServletRequest request, Model model,
+    public String postBook(@NotNull HttpServletRequest request, @NotNull Model model,
                            @ModelAttribute("bookDto") @Valid BookDto bookDto, BindingResult bindingResult){
-        PersonDto managerDto = managerService.getManagerDto(request.getUserPrincipal().getName());
+        PersonDto managerDto = managerService.getProfileDto(request.getUserPrincipal().getName());
         model.addAttribute("managerDto", managerDto);
         bookValidator.validate(bookDto, bindingResult);
         if(bindingResult.hasErrors()){
@@ -126,8 +116,8 @@ public class ManagerController {
     }
 
     @GetMapping("/settings")
-    private String managerSettings(HttpServletRequest request, Model model, @RequestParam("status") Optional<String> status){
-        PersonDto managerDto = managerService.getManagerDto(request.getUserPrincipal().getName());
+    private @NotNull String managerSettings(@NotNull HttpServletRequest request, @NotNull Model model, @RequestParam("status") @NotNull Optional<String> status){
+        PersonDto managerDto = managerService.getProfileDto(request.getUserPrincipal().getName());
         model.addAttribute("managerDto", managerDto);
         if(status.isPresent()){
             String changeSave = status.orElse(null);
@@ -137,9 +127,9 @@ public class ManagerController {
     }
 
     @PatchMapping("/settings")
-    private String changeProfile(@ModelAttribute("managerDto") @Valid ChangePersonDto managerDto,
-                                 BindingResult bindingResult, HttpServletRequest request){
-        PersonDto currentManagerDto = managerService.getManagerDto(request.getUserPrincipal().getName());
+    private @NotNull String changeProfile(@ModelAttribute("managerDto") @Valid @NotNull ChangePersonDto managerDto,
+                                          BindingResult bindingResult, @NotNull HttpServletRequest request){
+        PersonDto currentManagerDto = managerService.getProfileDto(request.getUserPrincipal().getName());
         managerDto.setLogin(currentManagerDto.getLogin());
         changeProfileValidator.validate(managerDto, bindingResult);
         if(bindingResult.hasErrors()){
@@ -147,6 +137,23 @@ public class ManagerController {
         }
         managerService.updateUser(managerDto);
         return "redirect:/manager/settings?status=ok";
+    }
+
+    @Autowired
+    public void setManagerService(ManagerService managerService){
+        this.managerService = managerService;
+    }
+    @Autowired
+    public void setPagination(Pagination pagination){
+        this.pagination = pagination;
+    }
+    @Autowired
+    public void setBookValidator(BookValidator bookValidator){
+        this.bookValidator = bookValidator;
+    }
+    @Autowired
+    public void setChangeProfileValidator(ChangeProfileValidator changeProfileValidator){
+        this.changeProfileValidator = changeProfileValidator;
     }
 
 }

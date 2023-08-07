@@ -15,38 +15,39 @@ import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true)
-public class PersonService {
-    private final PersonRepository personRepository;
-    private final PasswordEncoder passwordEncoder;
+public class PersonRepositoryServiceImpl implements PersonRepositoryService{
+    private PersonRepository personRepository;
+    private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public PersonService(PersonRepository personRepository, PasswordEncoder passwordEncoder) {
-        this.personRepository = personRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    @Override
+    public Person getPersonById(long id){return personRepository.getReferenceById(id);}
 
-    public Person getPerson(long id){return personRepository.getReferenceById(id);}
-
+    @Override
     public Person getPersonByLogin(String login){
         return personRepository.findPersonByLogin(login).orElse(null);
     }
 
+    @Override
     public Boolean personByLoginIsPresent(String login) {
         return personRepository.findPersonByLogin(login).isPresent();
     }
 
+    @Override
     public Boolean PersonByEmailIsPresent(String email) {
         return personRepository.findPersonByEmail(email).isPresent();
     }
 
+    @Override
     public List<Person> getAllBannedUsers() {
         return personRepository.findAllByPersonRoleAndIsBanned(PersonRole.USER, true);
     }
 
+    @Override
     public List<Person> getAllUser(PersonRole user) {
         return personRepository.findAllByPersonRole(user);
     }
 
+    @Override
     @Transactional
     public void registerNewUser(PersonDto personDto, PersonRole personRole) {
         Person newPerson = new Person();
@@ -61,6 +62,7 @@ public class PersonService {
         personRepository.saveAndFlush(newPerson);
     }
 
+    @Override
     @Transactional
     public void updateUser(ChangePersonDto personDto) {
         Person person = personRepository.findPersonByLogin(personDto.getLogin()).orElse(null);
@@ -73,8 +75,19 @@ public class PersonService {
         personRepository.save(person);
     }
 
+    @Override
     @Transactional
     public void changePersonStatus(Person person) {
         personRepository.saveAndFlush(person);
+    }
+
+    @Autowired
+    public void setPersonRepository(PersonRepository personRepository){
+        this.personRepository = personRepository;
+    }
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder){
+        this.passwordEncoder = passwordEncoder;
     }
 }

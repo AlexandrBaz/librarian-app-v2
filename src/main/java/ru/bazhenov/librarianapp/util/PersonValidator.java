@@ -6,18 +6,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.bazhenov.librarianapp.dto.PersonDto;
-import ru.bazhenov.librarianapp.service.PersonService;
+import ru.bazhenov.librarianapp.service.PersonRepositoryService;
 
 @Component
 public class PersonValidator implements Validator {
-    private final PersonService personService;
-    private final OthersUtils othersUtils;
-
-    @Autowired
-    public PersonValidator(PersonService personService, OthersUtils othersUtils) {
-        this.personService = personService;
-        this.othersUtils = othersUtils;
-    }
+    private PersonRepositoryService personRepositoryService;
+    private OthersUtils othersUtils;
 
     @Override
     public boolean supports(@NotNull Class<?> clazz) {
@@ -30,11 +24,20 @@ public class PersonValidator implements Validator {
         if (!othersUtils.isCyrillic(personDto.getFullName())){
             errors.rejectValue("fullName","", "ФИО должно быть на русском языке");
         }
-        if(personService.personByLoginIsPresent(personDto.getLogin())){
+        if(personRepositoryService.personByLoginIsPresent(personDto.getLogin())){
             errors.rejectValue("login", "", "Пользователь с таким логином уже существует");
         }
-        if (personService.PersonByEmailIsPresent(personDto.getEmail())){
+        if (personRepositoryService.PersonByEmailIsPresent(personDto.getEmail())){
             errors.rejectValue("email", "", "Такой email уже используется");
         }
+    }
+
+    @Autowired
+    public void setPersonRepositoryService(PersonRepositoryService personRepositoryService){
+        this.personRepositoryService = personRepositoryService;
+    }
+    @Autowired
+    public void setOthersUtils(OthersUtils othersUtils){
+        this.othersUtils = othersUtils;
     }
 }

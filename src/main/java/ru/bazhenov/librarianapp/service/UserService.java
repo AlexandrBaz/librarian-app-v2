@@ -1,73 +1,28 @@
 package ru.bazhenov.librarianapp.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import ru.bazhenov.librarianapp.dto.BookDto;
 import ru.bazhenov.librarianapp.dto.ChangePersonDto;
 import ru.bazhenov.librarianapp.dto.PersonDto;
-import ru.bazhenov.librarianapp.mapper.BookMapper;
-import ru.bazhenov.librarianapp.mapper.PersonBookToBookDtoMapper;
-import ru.bazhenov.librarianapp.mapper.PersonMapper;
-import ru.bazhenov.librarianapp.models.Person;
 
 import java.util.*;
 
 @Service
-@PreAuthorize("hasRole('ROLE_USER')")
-public class UserService {
-    private final BookService bookService;
-    private final PersonService personService;
-    private final PersonBookService personBookService;
-    private final PersonMapper personMapper;
-    private final BookMapper bookMapper;
-    private final PersonBookToBookDtoMapper personBookToBookDtoMapper;
+public interface UserService {
 
-    @Autowired
-    public UserService(BookService bookService, PersonService personService, PersonBookService personBookService, PersonMapper personMapper, BookMapper bookMapper, PersonBookToBookDtoMapper personBookToBookDtoMapper) {
-        this.bookService = bookService;
-        this.personService = personService;
-        this.personBookService = personBookService;
-        this.personMapper = personMapper;
-        this.bookMapper = bookMapper;
-        this.personBookToBookDtoMapper = personBookToBookDtoMapper;
-    }
+    List<BookDto> getListEnableToTake(@NotNull PersonDto userDto);
 
-    public PersonDto getUserDto(String login) {
-        return personMapper.toDTO(personService.getPersonByLogin(login));
-    }
-    public void updateUser(ChangePersonDto personDto) {
-        personService.updateUser(personDto);
-    }
+    List<BookDto> searchBook(String key, PersonDto userDto);
 
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')" )
-    public List<BookDto> getUserBooks(String login) {
-        return personService.getPersonByLogin(login).getPersonBookList().stream()
-                .map(personBookToBookDtoMapper::toDTO)
-                .toList();
-    }
+    void addBookToUser(String login, long bookId);
 
-    public List<BookDto> getListEnableToTake(PersonDto userDto) {
-        return bookService.getAvailableBooksForUser(userDto.getId()).stream()
-                .map(bookMapper::toDTO)
-                .sorted(Comparator.comparing(BookDto::getName))
-                .toList();
-    }
+    void returnBookFromPerson(String login, long bookId);
 
-    public List<BookDto> searchBook(String key, PersonDto userDto) {
-        return getListEnableToTake(userDto).stream()
-                .filter(bookDto -> bookDto.getName().toLowerCase(Locale.ROOT).contains(key.toLowerCase(Locale.ROOT)))
-                .toList();
-    }
+    PersonDto getProfileDto(String login);
 
-    public void addBookToUser(String login, long bookId) {
-        personBookService.addBookToUser(personService.getPersonByLogin(login), bookService.getBook(bookId));
-        bookService.reduceBookCount(bookId);
-    }
+    List<BookDto> getUserBooks(String login);
 
-    public void returnBookFromPerson(String login, long bookId) {
-        Person userEntity = personService.getPersonByLogin(login);
-        personBookService.returnBookFromPerson(userEntity, bookService.getBook(bookId));
-        bookService.increaseBookCount(bookId);
-    }
+    void updateUser(ChangePersonDto personDto);
+
 }

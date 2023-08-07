@@ -44,14 +44,16 @@ public class SecurityConfig {
         auth.userDetailsService(personDetailsService);
     }
 
-
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/auth/login", "/auth/registration", "/error", "/css/**", "/img/**", "/scripts/**", "/").permitAll()
-                        .anyRequest().hasAnyRole("USER", "ADMIN", "MANAGER"))
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/manager/**").hasRole("MANAGER")
+                        .requestMatchers("/user/**").hasRole("USER")
+                        .anyRequest().authenticated()
+                )
                 .formLogin(form -> form
                         .loginPage("/auth/login")
                         .loginProcessingUrl("/login")

@@ -12,16 +12,15 @@ import java.util.List;
 @NoArgsConstructor(force = true)
 @Table(name="book")
 @AllArgsConstructor
-//@RequiredArgsConstructor
 public class Book extends AbstractEntity {
     @NotEmpty(message = "Введите название книги")
-    @Column(name = "name", nullable = false)
+    @Column(name = "book_name", nullable = false)
     private String name;
     @NotEmpty(message = "Введите автора книги")
     @Column(name = "author", nullable = false)
     private String author;
     @Pattern(regexp = "^[12][0-9]{3}$|^[12][0-9]{3}-[12][0-9]{3}$", message = "Введите год выпуска, формат year или year-year")
-    @Column(name = "`year`", nullable = false)
+    @Column(name = "creation_year", nullable = false)
     private String year;
     @Column(name = "books_count", nullable = false)
     private long booksCount;

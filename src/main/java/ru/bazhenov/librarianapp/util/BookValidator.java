@@ -9,12 +9,7 @@ import ru.bazhenov.librarianapp.dto.BookDto;
 @Component
 public class BookValidator implements Validator{
 
-    private final OthersUtils othersUtils;
-
-    @Autowired
-    public BookValidator(OthersUtils othersUtils) {
-        this.othersUtils = othersUtils;
-    }
+    private OthersUtils othersUtils;
 
     @Override
     public boolean supports(@NotNull Class<?> clazz) {
@@ -33,6 +28,11 @@ public class BookValidator implements Validator{
         if(bookDto.getBooksCount() <= 0L ){
             errors.rejectValue("booksCount","", "Количество книг должно быть больше нуля");
         }
+    }
+
+    @Autowired
+    public void setOthersUtils(OthersUtils othersUtils){
+        this.othersUtils = othersUtils;
     }
 }
 

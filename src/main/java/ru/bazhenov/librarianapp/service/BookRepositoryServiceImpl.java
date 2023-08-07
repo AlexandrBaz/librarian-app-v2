@@ -11,41 +11,50 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
-public class BookService {
-    private final BookRepository bookRepository;
+public class BookRepositoryServiceImpl implements BookRepositoryService{
 
-    @Autowired
-    public BookService(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
+    private BookRepository bookRepository;
+
+    @Override
+    public Book getBook(long id) {
+        return bookRepository.getReferenceById(id);
     }
 
-    public Book getBook(long id){
-       return bookRepository.getReferenceById(id);
-    }
-
+    @Override
     public List<Book> getAllBooks(String sortBy) {
         return bookRepository.findAll(Sort.by(sortBy));
     }
 
-    public List<Book> getAvailableBooksForUser(long userId){
+    @Override
+    public List<Book> getAvailableBooksForUser(long userId) {
         return bookRepository.findAvailableBookForUser(0L, userId);
     }
 
+    @Override
     @Transactional
-    public void reduceBookCount(long bookId){
+    public void reduceBookCount(long bookId) {
         Book book = getBook(bookId);
         book.setBooksCount(book.getBooksCount()-1);
         bookRepository.saveAndFlush(book);
     }
 
+    @Override
     @Transactional
     public void increaseBookCount(long bookId) {
         Book book = getBook(bookId);
         book.setBooksCount(book.getBooksCount()+1);
         bookRepository.saveAndFlush(book);
+
     }
+
+    @Override
     @Transactional
     public void addBook(Book book) {
         bookRepository.saveAndFlush(book);
+    }
+
+    @Autowired
+    public void setBookRepository(BookRepository bookRepository){
+        this.bookRepository = bookRepository;
     }
 }

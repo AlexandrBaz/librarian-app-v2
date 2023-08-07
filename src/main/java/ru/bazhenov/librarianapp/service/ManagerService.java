@@ -1,101 +1,33 @@
 package ru.bazhenov.librarianapp.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import ru.bazhenov.librarianapp.dto.BookDto;
 import ru.bazhenov.librarianapp.dto.ChangePersonDto;
 import ru.bazhenov.librarianapp.dto.PersonDto;
-import ru.bazhenov.librarianapp.mapper.BookMapper;
-import ru.bazhenov.librarianapp.mapper.PersonBookToBookDtoMapper;
-import ru.bazhenov.librarianapp.mapper.PersonMapper;
-import ru.bazhenov.librarianapp.models.Person;
-import ru.bazhenov.librarianapp.models.PersonRole;
 
 import java.util.List;
-import java.util.Locale;
 
 @Service
-@PreAuthorize("hasRole('ROLE_MANAGER')")
-public class ManagerService {
-    private final PersonService personService;
-    private final PersonBookService personBookService;
-    private final BookService bookService;
-    private final PersonMapper personMapper;
-    private final BookMapper bookMapper;
-    private final PersonBookToBookDtoMapper personBookToBookDtoMapper;
+public interface ManagerService {
+    void addBook(BookDto bookDto);
 
-    @Autowired
-    public ManagerService(PersonService personService, PersonBookService personBookService, BookService bookService, PersonMapper personMapper, BookMapper bookMapper, PersonBookToBookDtoMapper personBookToBookDtoMapper) {
-        this.personService = personService;
-        this.personBookService = personBookService;
-        this.bookService = bookService;
-        this.bookMapper = bookMapper;
-        this.personMapper = personMapper;
-        this.personBookToBookDtoMapper = personBookToBookDtoMapper;
-    }
+    List<BookDto> searchBook(String key);
 
-    public PersonDto getManagerDto(String login) {
-        return personMapper.toDTO(personService.getPersonByLogin(login));
-    }
+    PersonDto getProfileDto(String login);
 
-    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
-    public PersonDto getUserDto(long id) {
-        return personMapper.toDTO(personService.getPerson(id));
-    }
+    List<BookDto> getUserBooks(String login);
 
-    public void addBook(BookDto bookDto) {
-        bookService.addBook(bookMapper.toEntity(bookDto));
-    }
+    PersonDto getUserDto(long id);
 
-    public void updateUser(ChangePersonDto managerDto) {
-        personService.updateUser(managerDto);
-    }
+    void changePersonStatus(long id);
 
-    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
-    public void changePersonStatus(long id) {
-        Person person = personService.getPerson(id);
-        if (person.getIsBanned()) {
-            person.setIsBanned(Boolean.FALSE);
-        } else {
-            person.setIsBanned(Boolean.TRUE);
-        }
-        personService.changePersonStatus(person);
-    }
+    void updateUser(ChangePersonDto personDto);
 
-    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
-    public List<BookDto> getListOfDebtors() {
-        return personBookService.getAllPersonBook().stream()
-                .map(personBookToBookDtoMapper::toDTO)
-                .filter(BookDto::getBookReturnIsExpired)
-                .toList();
-    }
+    List<BookDto> getListOfDebtors();
 
-    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
-    public List<PersonDto> getListBannedUsers() {
-        return personService.getAllBannedUsers().stream()
-                .map(personMapper::toDTO)
-                .toList();
-    }
+    List<PersonDto> getListBannedUsers();
 
-    public List<BookDto> searchBook(String key) {
-        return bookService.getAllBooks("name").stream()
-                .map(bookMapper::toDTO)
-                .filter(bookDto -> bookDto.getName().toLowerCase(Locale.ROOT).contains(key.toLowerCase(Locale.ROOT)))
-                .toList();
-    }
+    List<BookDto> getAllBooks();
 
-    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
-    public List<BookDto> getAllBooks() {
-        return bookService.getAllBooks("name").stream()
-                .map(bookMapper::toDTO)
-                .toList();
-    }
-
-    @PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
-    public List<PersonDto> getAllUsers() {
-        return personService.getAllUser(PersonRole.USER).stream()
-                .map(personMapper::toDTO)
-                .toList();
-    }
+    List<PersonDto> getAllUsers();
 }

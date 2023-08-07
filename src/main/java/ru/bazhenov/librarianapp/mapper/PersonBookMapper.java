@@ -6,23 +6,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.bazhenov.librarianapp.dto.PersonBookDto;
 import ru.bazhenov.librarianapp.models.PersonBook;
-import ru.bazhenov.librarianapp.service.BookService;
-import ru.bazhenov.librarianapp.service.PersonService;
+import ru.bazhenov.librarianapp.service.BookRepositoryService;
+import ru.bazhenov.librarianapp.service.PersonRepositoryService;
 
 import java.util.Objects;
 
 @Component
 public class PersonBookMapper extends AbstractMapper<PersonBook, PersonBookDto>{
     private final ModelMapper modelMapper;
-    private final PersonService personService;
-    private final BookService bookService;
+    private final PersonRepositoryService personRepositoryService;
+    private final BookRepositoryService bookRepositoryService;
 
     @Autowired
-    public PersonBookMapper(ModelMapper modelMapper, PersonService personService, BookService bookService) {
+    public PersonBookMapper(ModelMapper modelMapper, PersonRepositoryService personRepositoryService, BookRepositoryService bookRepositoryService) {
         super(PersonBook.class, PersonBookDto.class);
         this.modelMapper = modelMapper;
-        this.personService = personService;
-        this.bookService = bookService;
+        this.personRepositoryService = personRepositoryService;
+        this.bookRepositoryService = bookRepositoryService;
     }
     @PostConstruct
     public void setupMapper(){
@@ -45,9 +45,9 @@ public class PersonBookMapper extends AbstractMapper<PersonBook, PersonBookDto>{
 
     @Override
     void mapBookField(PersonBookDto source, PersonBook destination){
-        destination.setBook(bookService.getBook(source.getBookId()));
+        destination.setBook(bookRepositoryService.getBook(source.getBookId()));
     }
     void mapPersonField(PersonBookDto source, PersonBook destination){
-        destination.setPerson(personService.getPerson(source.getPersonId()));
+        destination.setPerson(personRepositoryService.getPersonById(source.getPersonId()));
     }
 }
