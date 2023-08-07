@@ -10,20 +10,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.bazhenov.librarianapp.dto.PersonDto;
 import ru.bazhenov.librarianapp.models.PersonRole;
-import ru.bazhenov.librarianapp.service.PersonServiceImpl;
+import ru.bazhenov.librarianapp.service.PersonRepositoryService;
 import ru.bazhenov.librarianapp.util.PersonValidator;
 
 @Controller
 @RequestMapping("/auth")
 public class AuthController {
-    private final PersonServiceImpl personServiceImpl;
-    private final PersonValidator personValidator;
-
-    @Autowired
-    public AuthController(PersonServiceImpl personServiceImpl, PersonValidator personValidator) {
-        this.personServiceImpl = personServiceImpl;
-        this.personValidator = personValidator;
-    }
+    private PersonRepositoryService personRepositoryService;
+    private PersonValidator personValidator;
 
     @GetMapping("/login")
     public String loginPage(){
@@ -40,7 +34,16 @@ public class AuthController {
         if(bindingResult.hasErrors()){
             return "auth/registration";
         }
-        personServiceImpl.registerNewUser(personDto, PersonRole.USER);
+        personRepositoryService.registerNewUser(personDto, PersonRole.USER);
         return "redirect:/auth/login";
+    }
+
+    @Autowired
+    public void setPersonRepositoryService(PersonRepositoryService personRepositoryService){
+        this.personRepositoryService = personRepositoryService;
+    }
+    @Autowired
+    public void setPersonValidator(PersonValidator personValidator){
+        this.personValidator = personValidator;
     }
 }

@@ -1,25 +1,20 @@
 package ru.bazhenov.librarianapp.util;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import ru.bazhenov.librarianapp.dto.ChangePersonDto;
 import ru.bazhenov.librarianapp.dto.PersonDto;
-import ru.bazhenov.librarianapp.service.PersonServiceImpl;
+import ru.bazhenov.librarianapp.service.PersonRepositoryService;
 
 @Component
 public class ChangeProfileValidator implements Validator {
-    private final PersonServiceImpl personServiceImpl;
-    private final OthersUtils othersUtils;
-    private final PasswordEncoder passwordEncoder;
-
-    public ChangeProfileValidator(PersonServiceImpl personServiceImpl, OthersUtils othersUtils, PasswordEncoder passwordEncoder) {
-        this.personServiceImpl = personServiceImpl;
-        this.othersUtils = othersUtils;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private PersonRepositoryService personRepositoryService;
+    private OthersUtils othersUtils;
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public boolean supports(@NotNull Class<?> clazz) {
@@ -33,7 +28,7 @@ public class ChangeProfileValidator implements Validator {
             errors.rejectValue("fullName", "", "ФИО должно быть на русском языке");
         }
         if (personDto.getNewPassword() != null && !personDto.getNewPassword().isBlank()) {
-            String oldPasswordFromEntity = personServiceImpl.getPersonByLogin(personDto.getLogin()).getPassword();
+            String oldPasswordFromEntity = personRepositoryService.getPersonByLogin(personDto.getLogin()).getPassword();
             CharSequence oldPasswordFromDto = personDto.getPassword();
             CharSequence newPasswordFromDto = personDto.getNewPassword();
             if (!passwordEncoder.matches(oldPasswordFromDto, oldPasswordFromEntity)){
@@ -43,5 +38,18 @@ public class ChangeProfileValidator implements Validator {
                 errors.rejectValue("newPassword", "", "Новый пароль совпадает со старым");
             }
         }
+    }
+
+    @Autowired
+    public void setOthersUtils(OthersUtils othersUtils){
+        this.othersUtils = othersUtils;
+    }
+    @Autowired
+    public void setPersonRepositoryService(PersonRepositoryService personRepositoryService){
+        this.personRepositoryService = personRepositoryService;
+    }
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder){
+        this.passwordEncoder = passwordEncoder;
     }
 }

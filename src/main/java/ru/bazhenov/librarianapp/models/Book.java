@@ -12,7 +12,6 @@ import java.util.List;
 @NoArgsConstructor(force = true)
 @Table(name="book")
 @AllArgsConstructor
-//@RequiredArgsConstructor
 public class Book extends AbstractEntity {
     @NotEmpty(message = "Введите название книги")
     @Column(name = "book_name", nullable = false)

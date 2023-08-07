@@ -25,13 +25,13 @@ public class PersonServiceImplIntegrationTest {
     @TestConfiguration
     static class EmployeeServiceImplTestContextConfiguration {
         @Bean
-        public PersonService personService() {
-            return new PersonServiceImpl();
+        public PersonRepositoryService personRepositoryService() {
+            return new PersonRepositoryServiceImpl();
         }
     }
 
     @Autowired
-    private PersonService personService;
+    private PersonRepositoryService personRepositoryService;
 
     @MockBean
     private PersonRepository personRepository;
@@ -63,7 +63,7 @@ public class PersonServiceImplIntegrationTest {
         Mockito.when(personRepository.findPersonByLogin(alex.getLogin())).thenReturn(Optional.of(alex));
         Mockito.when(personRepository.findPersonByLogin("wrong_name")).thenReturn(null);
 
-        Mockito.when(personService.personByLoginIsPresent(john.getLogin())).thenReturn(true);
+        Mockito.when(personRepositoryService.personByLoginIsPresent(john.getLogin())).thenReturn(true);
 
 //        Mockito.when(personService.personByLoginIsPresent(john.getLogin())).thenReturn(personRepository.findPersonByLogin(john.getLogin()).isPresent()).thenReturn(true);
 
@@ -76,7 +76,7 @@ public class PersonServiceImplIntegrationTest {
     }
     @Test
     public void whenValidId_thenPersonShouldBeFound(){
-        Person fromDb = personService.getPersonById(11L);
+        Person fromDb = personRepositoryService.getPersonById(11L);
         assertThat(fromDb.getFullName()).isEqualTo("Первый Юзер Тест");
 
         verifyFindByIdIsCalledOnce();
@@ -84,7 +84,7 @@ public class PersonServiceImplIntegrationTest {
 
     @Test
     public void whenInValidId_thenPersonShouldNotBeFound() {
-        Person fromDb = personService.getPersonById(-99L);
+        Person fromDb = personRepositoryService.getPersonById(-99L);
         verifyFindByIdIsCalledOnce();
         assertThat(fromDb).isNull();
     }
@@ -92,13 +92,13 @@ public class PersonServiceImplIntegrationTest {
     @Test
     public void  whenValidLogin_thenPersonShouldBeFound() {
         String login = "login";
-        Person found = personService.getPersonByLogin(login);
+        Person found = personRepositoryService.getPersonByLogin(login);
         assertThat(found.getLogin()).isEqualTo(login);
     }
 
     @Test
     public void whenInValidLogin_thenPersonShouldNotBeFound() {
-        Person fromDb = personService.getPersonByLogin("wrong_login");
+        Person fromDb = personRepositoryService.getPersonByLogin("wrong_login");
         assertThat(fromDb).isNull();
 
         verifyFindByLoginIsCalledOnce("wrong_login");
@@ -107,7 +107,7 @@ public class PersonServiceImplIntegrationTest {
     @Test
     public void whenValidLogin_ThenPersonShouldIsPresent() {
         String login = "login";
-        Boolean fromDb = personService.personByLoginIsPresent(login);
+        Boolean fromDb = personRepositoryService.personByLoginIsPresent(login);
         assertThat(fromDb).isNotNull();
     }
 

@@ -2,6 +2,8 @@ package ru.bazhenov.librarianapp.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,39 +19,33 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
-    private final AdminService adminService;
-    private final PersonValidator personValidator;
-    private final ChangeProfileValidator changeProfileValidator;
-
-    public AdminController(AdminService adminService, PersonValidator personValidator, ChangeProfileValidator changeProfileValidator) {
-        this.adminService = adminService;
-        this.personValidator = personValidator;
-        this.changeProfileValidator = changeProfileValidator;
-    }
+    private AdminService adminService;
+    private PersonValidator personValidator;
+    private ChangeProfileValidator changeProfileValidator;
 
     @GetMapping("/index")
-    private String getIndex(HttpServletRequest request, Model model){
-        PersonDto adminDto = adminService.getAdminDto(request.getUserPrincipal().getName());
+    private @NotNull String getIndex(@NotNull HttpServletRequest request, @NotNull Model model){
+        PersonDto adminDto = adminService.getProfileDto(request.getUserPrincipal().getName());
         model.addAttribute("adminDto", adminDto);
         model.addAttribute("allUsers", adminService.getAllUsers().size());
         model.addAttribute("allManagers", adminService.getAllManagers().size());
         model.addAttribute("allBooks", adminService.getAllBooks().size());
-        model.addAttribute("booksNotReturned", adminService.getBooksNotReturned().size());
-        model.addAttribute("bannedUsers", adminService.getBannedUsers().size());
+        model.addAttribute("booksNotReturned", adminService.getListOfDebtors().size());
+        model.addAttribute("bannedUsers", adminService.getListBannedUsers().size());
         return "/admin/index";
     }
 
     @GetMapping("/all-users")
     private String getAllUsers(HttpServletRequest request, Model model){
-        PersonDto adminDto = adminService.getAdminDto(request.getUserPrincipal().getName());
+        PersonDto adminDto = adminService.getProfileDto(request.getUserPrincipal().getName());
         model.addAttribute("adminDto", adminDto);
-        model.addAttribute("userDtoList", adminService.getUsersList());
+        model.addAttribute("userDtoList", adminService.getAllUsers());
         return "/admin/all-users";
     }
 
     @GetMapping("/user-{id}")
     private String getUser(HttpServletRequest request, Model model, @PathVariable("id") long id) {
-        PersonDto adminDto = adminService.getAdminDto(request.getUserPrincipal().getName());
+        PersonDto adminDto = adminService.getProfileDto(request.getUserPrincipal().getName());
         PersonDto userDto = adminService.getUserDto(id);
         model.addAttribute("adminDto", adminDto);
         model.addAttribute("userDto", userDto);
@@ -68,7 +64,7 @@ public class AdminController {
 
     @GetMapping("/all-managers")
     private String getAllManagers(HttpServletRequest request, Model model){
-        PersonDto adminDto = adminService.getAdminDto(request.getUserPrincipal().getName());
+        PersonDto adminDto = adminService.getProfileDto(request.getUserPrincipal().getName());
         model.addAttribute("adminDto", adminDto);
         model.addAttribute("managerList", adminService.getAllManagers());
         return "/admin/all-managers";
@@ -78,7 +74,7 @@ public class AdminController {
     private String addManager(@ModelAttribute("personDto") PersonDto personDto,
                               HttpServletRequest request, Model model,
                               @RequestParam("status") Optional<String> status){
-        PersonDto adminDto = adminService.getAdminDto(request.getUserPrincipal().getName());
+        PersonDto adminDto = adminService.getProfileDto(request.getUserPrincipal().getName());
         model.addAttribute("adminDto", adminDto);
         if(status.isPresent()){
             String success = status.orElse(null);
@@ -90,7 +86,7 @@ public class AdminController {
     @PostMapping("/add-manager")
     private String createManager(@ModelAttribute("personDto") @Valid PersonDto personDto,
                                  BindingResult bindingResult, HttpServletRequest request, Model model){
-        PersonDto adminDto = adminService.getAdminDto(request.getUserPrincipal().getName());
+        PersonDto adminDto = adminService.getProfileDto(request.getUserPrincipal().getName());
         model.addAttribute("adminDto", adminDto);
         personValidator.validate(personDto, bindingResult);
         if(bindingResult.hasErrors()){
@@ -102,7 +98,7 @@ public class AdminController {
 
     @GetMapping("/settings")
     private String managerSettings(HttpServletRequest request, Model model, @RequestParam("status") Optional<String> status){
-        PersonDto adminDto = adminService.getAdminDto(request.getUserPrincipal().getName());
+        PersonDto adminDto = adminService.getProfileDto(request.getUserPrincipal().getName());
         model.addAttribute("adminDto", adminDto);
         if(status.isPresent()){
             String changeSave = status.orElse(null);
@@ -114,7 +110,7 @@ public class AdminController {
     @PatchMapping("/settings")
     private String changeProfile(@ModelAttribute("adminDto") @Valid ChangePersonDto adminDto,
                                  BindingResult bindingResult, HttpServletRequest request){
-        PersonDto currentAdminDto = adminService.getAdminDto(request.getUserPrincipal().getName());
+        PersonDto currentAdminDto = adminService.getProfileDto(request.getUserPrincipal().getName());
         adminDto.setLogin(currentAdminDto.getLogin());
         changeProfileValidator.validate(adminDto, bindingResult);
         if(bindingResult.hasErrors()){
@@ -122,5 +118,18 @@ public class AdminController {
         }
         adminService.updateUser(adminDto);
         return "redirect:/admin/settings?status=ok";
+    }
+
+    @Autowired
+    public void setAdminService(AdminService adminService){
+        this.adminService = adminService;
+    }
+    @Autowired
+    public void setChangeProfileValidator(ChangeProfileValidator changeProfileValidator){
+        this.changeProfileValidator = changeProfileValidator;
+    }
+    @Autowired
+    public void setPersonValidator(PersonValidator personValidator){
+        this.personValidator = personValidator;
     }
 }

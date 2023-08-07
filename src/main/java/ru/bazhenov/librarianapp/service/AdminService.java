@@ -1,78 +1,34 @@
 package ru.bazhenov.librarianapp.service;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import ru.bazhenov.librarianapp.dto.BookDto;
 import ru.bazhenov.librarianapp.dto.ChangePersonDto;
 import ru.bazhenov.librarianapp.dto.PersonDto;
-import ru.bazhenov.librarianapp.mapper.PersonMapper;
-import ru.bazhenov.librarianapp.models.PersonRole;
 
 import java.util.List;
 
 @Service
-@PreAuthorize("hasRole('ROLE_ADMIN')")
-public class AdminService {
+public interface AdminService{
 
-    private final PersonServiceImpl personServiceImpl;
-    private final ManagerService managerService;
-    private final UserService userService;
-    private final PersonMapper personMapper;
+    List<PersonDto> getAllManagers();
 
-    public AdminService(PersonServiceImpl personServiceImpl, ManagerService managerService, UserService userService, PersonMapper personMapper) {
-        this.personServiceImpl = personServiceImpl;
-        this.managerService = managerService;
-        this.userService = userService;
-        this.personMapper = personMapper;
-    }
+    void registerNewUser(PersonDto personDto);
 
-    public PersonDto getAdminDto(String login) {
-        return personMapper.toDTO(personServiceImpl.getPersonByLogin(login));
-    }
+    PersonDto getProfileDto(String login);
 
-    public List<PersonDto> getAllUsers() {
-        return managerService.getAllUsers();
-    }
+    List<BookDto> getUserBooks(String login);
 
-    public List<PersonDto> getAllManagers() {
-        return personServiceImpl.getAllUser(PersonRole.MANAGER).stream()
-                .map(personMapper::toDTO)
-                .toList();
-    }
+    PersonDto getUserDto(long id);
 
-    public List<BookDto> getAllBooks() {
-        return managerService.getAllBooks();
-    }
+    void changePersonStatus(long id);
 
-    public List<BookDto> getBooksNotReturned() {
-        return managerService.getListOfDebtors();
-    }
+    void updateUser(ChangePersonDto personDto);
 
-    public List<PersonDto> getBannedUsers() {
-        return managerService.getListBannedUsers();
-    }
+    List<BookDto> getListOfDebtors();
 
-    public List<PersonDto> getUsersList() {
-        return managerService.getAllUsers();
-    }
+    List<PersonDto> getListBannedUsers();
 
-    public PersonDto getUserDto(long id) {
-        return managerService.getUserDto(id);
-    }
+    List<BookDto> getAllBooks();
 
-    public List<BookDto> getUserBooks(String login) {
-        return userService.getUserBooks(login);
-    }
-
-    public void changePersonStatus(long id) {
-        managerService.changePersonStatus(id);
-    }
-
-    public void registerNewUser(PersonDto personDto) {
-        personServiceImpl.registerNewUser(personDto, PersonRole.MANAGER);
-    }
-
-    public void updateUser(ChangePersonDto adminDto) {
-        personServiceImpl.updateUser(adminDto);
-    }
+    List<PersonDto> getAllUsers();
 }

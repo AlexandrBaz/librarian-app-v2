@@ -2,6 +2,7 @@ package ru.bazhenov.librarianapp.controllers;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -21,21 +22,14 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/user")
 public class UserController {
-    private final UserService userService;
-    private final ChangeProfileValidator changeProfileValidator;
-    private final Pagination pagination;
+    private UserService userService;
+    private ChangeProfileValidator changeProfileValidator;
+    private Pagination pagination;
 
-
-    @Autowired
-    public UserController(UserService userService, ChangeProfileValidator changeProfileValidator, Pagination pagination) {
-        this.userService = userService;
-        this.changeProfileValidator = changeProfileValidator;
-        this.pagination = pagination;
-    }
 
     @GetMapping("/index")
-    public String getIndex(HttpServletRequest request, Model model) {
-        PersonDto userDto = userService.getUserDto(request.getUserPrincipal().getName());
+    public String getIndex(@NotNull HttpServletRequest request, Model model) {
+        PersonDto userDto = userService.getProfileDto(request.getUserPrincipal().getName());
         if (userDto.getIsBanned()){
             return "redirect:/banned";
         }
@@ -47,13 +41,13 @@ public class UserController {
     }
 
     @GetMapping(value = "/books")
-    public String getBooks(HttpServletRequest request,
+    public String getBooks(@NotNull HttpServletRequest request,
                            Model model,
                            @RequestParam("search") Optional<String> search,
                            @RequestParam("page") Optional<Integer> page,
                            @RequestParam("size") Optional<Integer> size,
                            @RequestParam("by") Optional<String> sortBy) {
-        PersonDto userDto = userService.getUserDto(request.getUserPrincipal().getName());
+        PersonDto userDto = userService.getProfileDto(request.getUserPrincipal().getName());
         if (userDto.getIsBanned()){
             return "redirect:/banned";
         }
@@ -81,20 +75,20 @@ public class UserController {
     }
 
     @PatchMapping("/books/add-book-{id}")
-    public String userProfileAddBook(HttpServletRequest request, @PathVariable("id") long bookId) {
+    public String userProfileAddBook(@NotNull HttpServletRequest request, @PathVariable("id") long bookId) {
         userService.addBookToUser(request.getUserPrincipal().getName(), bookId);
         return "redirect:/user/books";
     }
 
     @PatchMapping("/books/return-book-{id}")
-    public String userProfileReturnBook(HttpServletRequest request, @PathVariable("id") long bookId) {
+    public String userProfileReturnBook(@NotNull HttpServletRequest request, @PathVariable("id") long bookId) {
         userService.returnBookFromPerson(request.getUserPrincipal().getName(), bookId);
         return "redirect:/user/index";
     }
 
     @GetMapping("/settings")
-    public String changeUserProfile(HttpServletRequest request, Model model, @RequestParam("status") Optional<String> status){
-        PersonDto userDto = userService.getUserDto(request.getUserPrincipal().getName());
+    public String changeUserProfile(@NotNull HttpServletRequest request, Model model, @RequestParam("status") Optional<String> status){
+        PersonDto userDto = userService.getProfileDto(request.getUserPrincipal().getName());
         if (userDto.getIsBanned()){
             return "redirect:/banned";
         }
@@ -107,16 +101,29 @@ public class UserController {
     }
 
     @PatchMapping("/settings")
-    public String updateUserProfile(@ModelAttribute("userDto") @Valid ChangePersonDto userDto,
-                                    BindingResult bindingResult, HttpServletRequest request){
-        PersonDto currentUserDto = userService.getUserDto(request.getUserPrincipal().getName());
+    public String updateUserProfile(@ModelAttribute("userDto") @Valid @NotNull ChangePersonDto userDto,
+                                    BindingResult bindingResult, @NotNull HttpServletRequest request){
+        PersonDto currentUserDto = userService.getProfileDto(request.getUserPrincipal().getName());
         userDto.setLogin(currentUserDto.getLogin());
         changeProfileValidator.validate(userDto, bindingResult);
-        userDto.setPersonBookList(userService.getUserDto(request.getUserPrincipal().getName()).getPersonBookList());
+        userDto.setPersonBookList(userService.getProfileDto(request.getUserPrincipal().getName()).getPersonBookList());
         if(bindingResult.hasErrors()){
             return "/user/settings";
         }
         userService.updateUser(userDto);
         return "redirect:/user/settings?status=ok";
+    }
+
+    @Autowired
+    public void setUserService(UserService userService){
+        this.userService = userService;
+    }
+    @Autowired
+    public void setPagination(Pagination pagination){
+        this.pagination = pagination;
+    }
+    @Autowired
+    public void setChangeProfileValidator(ChangeProfileValidator changeProfileValidator){
+        this.changeProfileValidator = changeProfileValidator;
     }
 }

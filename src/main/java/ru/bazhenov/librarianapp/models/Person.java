@@ -15,7 +15,6 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor(force = true)
 @AllArgsConstructor
-//@RequiredArgsConstructor
 public class Person extends AbstractEntity{
     @NotEmpty(message = "Введите Фамилию Имя Отчество")
     @Pattern(regexp = "[А-Я][а-я]+ [А-Я][а-я]+ [А-Я][а-я]+", message = "Формат ввода, с большой буквы, разделенный пробелами")

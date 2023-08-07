@@ -1,5 +1,6 @@
 package ru.bazhenov.librarianapp.util;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -19,13 +20,8 @@ import java.util.stream.IntStream;
 
 @Component
 public class Pagination {
-    private final UserService userService;
-    private final ManagerService managerService;
-
-    public Pagination(UserService userService, ManagerService managerService) {
-        this.userService = userService;
-        this.managerService = managerService;
-    }
+    private UserService userService;
+    private ManagerService managerService;
 
     public Page<BookDto> getPaginatedPage(PageableData pageableData, PersonDto userDto) {
         Pageable pageable = PageRequest.of(pageableData.getCurrenPage() - 1, pageableData.getPageSize());
@@ -76,5 +72,14 @@ public class Pagination {
         return IntStream.range(1, totalPages)
                 .boxed()
                 .toList();
+    }
+
+    @Autowired
+    public void setUserService(UserService userService){
+        this.userService = userService;
+    }
+    @Autowired
+    public void setManagerService(ManagerService managerService){
+        this.managerService = managerService;
     }
 }

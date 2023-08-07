@@ -29,18 +29,18 @@ public class PersonServiceImplTest {
     @TestConfiguration
     static class EmployeeServiceImplTestContextConfiguration {
         @Bean
-        public PersonService personService() {
-            return new PersonServiceImpl();
+        public PersonRepositoryService personService() {
+            return new PersonRepositoryServiceImpl();
         }
     }
     @Autowired
     private PersonRepository personRepository;
     @Autowired
-    private PersonService personService;
+    private PersonRepositoryService personRepositoryService;
     @Autowired
     private TestEntityManager entityManager;
     @Autowired
-    private PersonServiceImpl personServiceImpl;
+    private PersonRepositoryServiceImpl personRepositoryServiceImpl;
 
     Person testUser = new Person("Первый Юзер Тест", "login", "1Password@", "test@test.com",
             new GregorianCalendar(2016, Calendar.MARCH, 6).getTime(), null, PersonRole.USER,
@@ -64,7 +64,7 @@ public class PersonServiceImplTest {
     @Test
     public void personByLoginIsPresent() {
         entityManager.persistAndFlush(testUser);
-        Boolean found = personService.personByLoginIsPresent(testUser.getLogin());
+        Boolean found = personRepositoryService.personByLoginIsPresent(testUser.getLogin());
         assertThat(found).isTrue();
     }
 //

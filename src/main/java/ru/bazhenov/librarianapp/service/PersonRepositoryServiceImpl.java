@@ -1,6 +1,5 @@
 package ru.bazhenov.librarianapp.service;
 
-import jakarta.persistence.Access;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,7 @@ import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true)
-public class PersonServiceImpl implements PersonService{
+public class PersonRepositoryServiceImpl implements PersonRepositoryService{
     private PersonRepository personRepository;
     private PasswordEncoder passwordEncoder;
 
